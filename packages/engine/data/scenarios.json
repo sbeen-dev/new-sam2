@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "note": "PROVISIONAL 시드. 시나리오1(189) 일부 세력만 배치한 검증용. 6개 시나리오 전체·정확한 세력 배치·초기 수치 확정은 후속 작업(docs/game-design/scenarios.md). 초기 수치는 밸런싱 전 placeholder.",
+    "note": "역사 기반 시나리오. 초기 수치는 stat-methodology.md의 도시 밴드로 산정(밸런싱 전). 세력 배치는 189년 판도의 근사. 미점령 도시는 로더가 중립(lordId=null)으로 채운다. 시나리오 2~6은 후속 작업(scenarios.md).",
     "referencesMustExist": "lordId/officerId는 officers.json, cityId는 cities.json에 존재해야 함(validate로 검증)"
   },
   "scenarios": [
@@ -8,42 +8,84 @@
       "id": "s1_189",
       "year": 189,
       "title": "반동탁 연합",
-      "playableLords": ["cao_cao", "yuan_shao", "dong_zhuo", "sun_ce", "liu_bei"],
+      "playableLords": ["dong_zhuo", "cao_cao", "yuan_shao", "sun_jian", "liu_bei", "gongsun_zan", "yuan_shu", "liu_biao", "ma_teng", "tao_qian", "liu_zhang"],
       "lords": [
         {
           "lordId": "dong_zhuo",
-          "officers": ["dong_zhuo", "lu_bu"],
+          "officers": ["dong_zhuo", "lu_bu", "hua_xiong", "jia_xu"],
           "cities": [
-            { "cityId": "luoyang", "gold": 800, "rice": 1200, "soldiers": 15000, "land": 600, "flood": 500, "population": 400000, "publicOrder": 45 },
-            { "cityId": "chang_an", "gold": 500, "rice": 900, "soldiers": 9000, "land": 500, "flood": 450, "population": 300000, "publicOrder": 50 }
-          ]
-        },
-        {
-          "lordId": "cao_cao",
-          "officers": ["cao_cao"],
-          "cities": [
-            { "cityId": "xuchang", "gold": 600, "rice": 800, "soldiers": 8000, "land": 550, "flood": 500, "population": 280000, "publicOrder": 60 }
+            { "cityId": "luoyang", "gold": 850, "rice": 1300, "soldiers": 15000, "land": 630, "flood": 520, "population": 420000, "publicOrder": 40 },
+            { "cityId": "chang_an", "gold": 600, "rice": 1000, "soldiers": 10000, "land": 560, "flood": 490, "population": 320000, "publicOrder": 44 }
           ]
         },
         {
           "lordId": "yuan_shao",
-          "officers": ["yuan_shao"],
+          "officers": ["yuan_shao", "yan_liang", "wen_chou", "tian_feng", "ju_shou"],
           "cities": [
-            { "cityId": "ye", "gold": 700, "rice": 1000, "soldiers": 12000, "land": 600, "flood": 520, "population": 350000, "publicOrder": 58 }
+            { "cityId": "ye", "gold": 780, "rice": 1200, "soldiers": 13000, "land": 620, "flood": 540, "population": 400000, "publicOrder": 62 }
           ]
         },
         {
-          "lordId": "sun_ce",
-          "officers": ["sun_ce", "zhou_yu"],
+          "lordId": "cao_cao",
+          "officers": ["cao_cao", "xiahou_dun", "xiahou_yuan", "cao_ren", "cheng_yu"],
           "cities": [
-            { "cityId": "jianye", "gold": 500, "rice": 900, "soldiers": 7000, "land": 520, "flood": 480, "population": 260000, "publicOrder": 62 }
+            { "cityId": "chenliu", "gold": 560, "rice": 820, "soldiers": 7000, "land": 540, "flood": 500, "population": 270000, "publicOrder": 63 }
+          ]
+        },
+        {
+          "lordId": "gongsun_zan",
+          "officers": ["gongsun_zan", "zhao_yun"],
+          "cities": [
+            { "cityId": "beiping", "gold": 480, "rice": 700, "soldiers": 8000, "land": 500, "flood": 460, "population": 220000, "publicOrder": 58 }
           ]
         },
         {
           "lordId": "liu_bei",
           "officers": ["liu_bei", "guan_yu", "zhang_fei"],
           "cities": [
-            { "cityId": "xiapi", "gold": 300, "rice": 500, "soldiers": 4000, "land": 450, "flood": 430, "population": 180000, "publicOrder": 65 }
+            { "cityId": "pingyuan", "gold": 300, "rice": 480, "soldiers": 3500, "land": 470, "flood": 440, "population": 160000, "publicOrder": 68 }
+          ]
+        },
+        {
+          "lordId": "sun_jian",
+          "officers": ["sun_jian", "sun_ce", "huang_gai", "cheng_pu"],
+          "cities": [
+            { "cityId": "changsha", "gold": 450, "rice": 780, "soldiers": 7000, "land": 520, "flood": 470, "population": 240000, "publicOrder": 64 }
+          ]
+        },
+        {
+          "lordId": "yuan_shu",
+          "officers": ["yuan_shu"],
+          "cities": [
+            { "cityId": "wan", "gold": 620, "rice": 900, "soldiers": 9000, "land": 560, "flood": 500, "population": 300000, "publicOrder": 55 }
+          ]
+        },
+        {
+          "lordId": "liu_biao",
+          "officers": ["liu_biao"],
+          "cities": [
+            { "cityId": "xiangyang", "gold": 700, "rice": 1000, "soldiers": 9000, "land": 590, "flood": 520, "population": 330000, "publicOrder": 66 }
+          ]
+        },
+        {
+          "lordId": "tao_qian",
+          "officers": ["tao_qian"],
+          "cities": [
+            { "cityId": "xiapi", "gold": 520, "rice": 760, "soldiers": 6000, "land": 530, "flood": 480, "population": 260000, "publicOrder": 60 }
+          ]
+        },
+        {
+          "lordId": "ma_teng",
+          "officers": ["ma_teng", "ma_chao"],
+          "cities": [
+            { "cityId": "jincheng", "gold": 360, "rice": 560, "soldiers": 7000, "land": 440, "flood": 420, "population": 150000, "publicOrder": 52 }
+          ]
+        },
+        {
+          "lordId": "liu_zhang",
+          "officers": ["liu_zhang"],
+          "cities": [
+            { "cityId": "chengdu", "gold": 800, "rice": 1400, "soldiers": 10000, "land": 640, "flood": 560, "population": 430000, "publicOrder": 67 }
           ]
         }
       ]

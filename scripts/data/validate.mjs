@@ -61,19 +61,44 @@ for (const c of cities) {
   }
 }
 
-// --- scenarios (참조 무결성) ---
+// --- 지도 연결성 (모든 주가 하나로 연결되어야 도달 가능) ---
+if (cities.length) {
+  const seen = new Set();
+  const stack = [cities[0].id];
+  while (stack.length) {
+    const cur = stack.pop();
+    if (seen.has(cur)) continue;
+    seen.add(cur);
+    const node = cities.find((c) => c.id === cur);
+    for (const a of node.adjacent) if (!seen.has(a)) stack.push(a);
+  }
+  if (seen.size !== cities.length)
+    err(`지도 비연결: 도달 ${seen.size}/${cities.length}개 주(고립 지역 존재)`);
+}
+
+// --- scenarios (참조 무결성 + 중복 배치 방지) ---
 const scenarioIds = new Set();
 for (const s of scenarios) {
   if (scenarioIds.has(s.id)) err(`scenario 중복 id: ${s.id}`);
   scenarioIds.add(s.id);
   for (const lid of s.playableLords)
     if (!officerIds.has(lid)) err(`scenario ${s.id} playableLord 없음: ${lid}`);
+  const usedOfficers = new Set();
+  const usedCities = new Set();
   for (const lord of s.lords) {
     if (!officerIds.has(lord.lordId)) err(`scenario ${s.id} lordId 없음: ${lord.lordId}`);
-    for (const oid of lord.officers)
+    for (const oid of lord.officers) {
       if (!officerIds.has(oid)) err(`scenario ${s.id} officer 없음: ${oid}`);
-    for (const ci of lord.cities)
+      if (usedOfficers.has(oid)) err(`scenario ${s.id} officer 중복 배치: ${oid}`);
+      usedOfficers.add(oid);
+    }
+    if (!lord.officers.includes(lord.lordId))
+      err(`scenario ${s.id} 군주가 자기 officers에 없음: ${lord.lordId}`);
+    for (const ci of lord.cities) {
       if (!cityIds.has(ci.cityId)) err(`scenario ${s.id} city 없음: ${ci.cityId}`);
+      if (usedCities.has(ci.cityId)) err(`scenario ${s.id} city 중복 배치: ${ci.cityId}`);
+      usedCities.add(ci.cityId);
+    }
   }
 }
 

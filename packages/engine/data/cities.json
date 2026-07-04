@@ -1,21 +1,503 @@
 {
   "_meta": {
-    "note": "PROVISIONAL 시드. 실제 역사 지명이며 인접/좌표는 개략적 배치. 원작 41개 주 전체 목록·인접·좌표 확정은 후속 작업(docs/game-design/cities.md, data-catalog.md). 인접(adjacent)은 대칭이어야 함(validate로 검증).",
-    "coordScale": "0..1 정규화",
-    "totalTargetCities": 41
+    "note": "_raw/regions.json에서 자동 생성. 직접 편집 금지 — 원천을 고치고 build-cities.mjs 재실행.",
+    "generatedFrom": "_raw/regions.json",
+    "totalCities": 41,
+    "coordScale": "0..1 정규화"
   },
   "cities": [
-    { "id": "luoyang",  "name": "낙양",   "adjacent": ["chang_an", "xuchang", "ye"],        "x": 0.50, "y": 0.42 },
-    { "id": "chang_an", "name": "장안",   "adjacent": ["luoyang", "tianshui"],              "x": 0.38, "y": 0.40 },
-    { "id": "xuchang",  "name": "허창",   "adjacent": ["luoyang", "xiapi", "wan"],          "x": 0.58, "y": 0.48 },
-    { "id": "ye",       "name": "업",     "adjacent": ["luoyang", "beiping"],               "x": 0.55, "y": 0.30 },
-    { "id": "beiping",  "name": "북평",   "adjacent": ["ye"],                                "x": 0.62, "y": 0.18 },
-    { "id": "xiapi",    "name": "하비",   "adjacent": ["xuchang", "jianye"],                "x": 0.68, "y": 0.52 },
-    { "id": "wan",      "name": "완",     "adjacent": ["xuchang", "jiangling"],             "x": 0.52, "y": 0.58 },
-    { "id": "jiangling","name": "강릉",   "adjacent": ["wan", "jianye", "chengdu"],         "x": 0.50, "y": 0.68 },
-    { "id": "jianye",   "name": "건업",   "adjacent": ["xiapi", "jiangling", "kuaiji"],     "x": 0.72, "y": 0.64 },
-    { "id": "kuaiji",   "name": "회계",   "adjacent": ["jianye"],                            "x": 0.80, "y": 0.72 },
-    { "id": "chengdu",  "name": "성도",   "adjacent": ["jiangling", "tianshui"],            "x": 0.30, "y": 0.66 },
-    { "id": "tianshui", "name": "천수",   "adjacent": ["chang_an", "chengdu"],              "x": 0.28, "y": 0.50 }
+    {
+      "id": "xiangping",
+      "name": "양평",
+      "region": "유주",
+      "adjacent": [
+        "beiping"
+      ],
+      "x": 0.86,
+      "y": 0.08
+    },
+    {
+      "id": "beiping",
+      "name": "북평",
+      "region": "유주",
+      "adjacent": [
+        "nanpi",
+        "xiangping"
+      ],
+      "x": 0.7,
+      "y": 0.16
+    },
+    {
+      "id": "nanpi",
+      "name": "남피",
+      "region": "기주",
+      "adjacent": [
+        "beiping",
+        "pingyuan",
+        "ye"
+      ],
+      "x": 0.64,
+      "y": 0.27
+    },
+    {
+      "id": "pingyuan",
+      "name": "평원",
+      "region": "청주",
+      "adjacent": [
+        "beihai",
+        "nanpi",
+        "puyang",
+        "ye"
+      ],
+      "x": 0.62,
+      "y": 0.34
+    },
+    {
+      "id": "ye",
+      "name": "업",
+      "region": "기주",
+      "adjacent": [
+        "jinyang",
+        "nanpi",
+        "pingyuan",
+        "puyang"
+      ],
+      "x": 0.57,
+      "y": 0.3
+    },
+    {
+      "id": "jinyang",
+      "name": "진양",
+      "region": "병주",
+      "adjacent": [
+        "chang_an",
+        "luoyang",
+        "ye"
+      ],
+      "x": 0.47,
+      "y": 0.25
+    },
+    {
+      "id": "beihai",
+      "name": "북해",
+      "region": "청주",
+      "adjacent": [
+        "langye",
+        "pingyuan"
+      ],
+      "x": 0.72,
+      "y": 0.36
+    },
+    {
+      "id": "puyang",
+      "name": "복양",
+      "region": "연주",
+      "adjacent": [
+        "chenliu",
+        "pingyuan",
+        "ye"
+      ],
+      "x": 0.57,
+      "y": 0.39
+    },
+    {
+      "id": "chenliu",
+      "name": "진류",
+      "region": "연주",
+      "adjacent": [
+        "luoyang",
+        "puyang",
+        "xuchang"
+      ],
+      "x": 0.55,
+      "y": 0.43
+    },
+    {
+      "id": "luoyang",
+      "name": "낙양",
+      "region": "사예",
+      "adjacent": [
+        "chang_an",
+        "chenliu",
+        "jinyang",
+        "wan",
+        "xuchang"
+      ],
+      "x": 0.49,
+      "y": 0.42
+    },
+    {
+      "id": "xuchang",
+      "name": "허창",
+      "region": "예주",
+      "adjacent": [
+        "chenliu",
+        "luoyang",
+        "runan",
+        "wan",
+        "xiaopei"
+      ],
+      "x": 0.55,
+      "y": 0.47
+    },
+    {
+      "id": "runan",
+      "name": "여남",
+      "region": "예주",
+      "adjacent": [
+        "shouchun",
+        "wan",
+        "xuchang"
+      ],
+      "x": 0.57,
+      "y": 0.51
+    },
+    {
+      "id": "xiaopei",
+      "name": "소패",
+      "region": "예주",
+      "adjacent": [
+        "langye",
+        "xiapi",
+        "xuchang"
+      ],
+      "x": 0.62,
+      "y": 0.45
+    },
+    {
+      "id": "xiapi",
+      "name": "하비",
+      "region": "서주",
+      "adjacent": [
+        "langye",
+        "shouchun",
+        "xiaopei"
+      ],
+      "x": 0.66,
+      "y": 0.47
+    },
+    {
+      "id": "langye",
+      "name": "낭야",
+      "region": "서주",
+      "adjacent": [
+        "beihai",
+        "xiaopei",
+        "xiapi"
+      ],
+      "x": 0.71,
+      "y": 0.43
+    },
+    {
+      "id": "chang_an",
+      "name": "장안",
+      "region": "사예",
+      "adjacent": [
+        "anding",
+        "hanzhong",
+        "jinyang",
+        "luoyang",
+        "tianshui"
+      ],
+      "x": 0.39,
+      "y": 0.42
+    },
+    {
+      "id": "anding",
+      "name": "안정",
+      "region": "양주",
+      "adjacent": [
+        "chang_an",
+        "tianshui",
+        "wuwei"
+      ],
+      "x": 0.33,
+      "y": 0.36
+    },
+    {
+      "id": "tianshui",
+      "name": "천수",
+      "region": "양주",
+      "adjacent": [
+        "anding",
+        "chang_an",
+        "hanzhong",
+        "jincheng"
+      ],
+      "x": 0.29,
+      "y": 0.44
+    },
+    {
+      "id": "wuwei",
+      "name": "무위",
+      "region": "양주",
+      "adjacent": [
+        "anding",
+        "jincheng"
+      ],
+      "x": 0.22,
+      "y": 0.34
+    },
+    {
+      "id": "jincheng",
+      "name": "금성",
+      "region": "양주",
+      "adjacent": [
+        "tianshui",
+        "wuwei"
+      ],
+      "x": 0.18,
+      "y": 0.42
+    },
+    {
+      "id": "hanzhong",
+      "name": "한중",
+      "region": "익주",
+      "adjacent": [
+        "chang_an",
+        "tianshui",
+        "zitong"
+      ],
+      "x": 0.33,
+      "y": 0.52
+    },
+    {
+      "id": "zitong",
+      "name": "재동",
+      "region": "익주",
+      "adjacent": [
+        "chengdu",
+        "hanzhong",
+        "jiangzhou"
+      ],
+      "x": 0.29,
+      "y": 0.56
+    },
+    {
+      "id": "chengdu",
+      "name": "성도",
+      "region": "익주",
+      "adjacent": [
+        "jiangzhou",
+        "jianning",
+        "zitong"
+      ],
+      "x": 0.24,
+      "y": 0.61
+    },
+    {
+      "id": "jiangzhou",
+      "name": "강주",
+      "region": "익주",
+      "adjacent": [
+        "chengdu",
+        "jianning",
+        "yongan",
+        "zitong"
+      ],
+      "x": 0.33,
+      "y": 0.64
+    },
+    {
+      "id": "yongan",
+      "name": "영안",
+      "region": "익주",
+      "adjacent": [
+        "jiangling",
+        "jiangzhou"
+      ],
+      "x": 0.4,
+      "y": 0.62
+    },
+    {
+      "id": "jianning",
+      "name": "건녕",
+      "region": "익주",
+      "adjacent": [
+        "chengdu",
+        "jiangzhou",
+        "yunnan"
+      ],
+      "x": 0.27,
+      "y": 0.73
+    },
+    {
+      "id": "yunnan",
+      "name": "운남",
+      "region": "익주",
+      "adjacent": [
+        "jianning"
+      ],
+      "x": 0.21,
+      "y": 0.79
+    },
+    {
+      "id": "wan",
+      "name": "완",
+      "region": "형주",
+      "adjacent": [
+        "luoyang",
+        "runan",
+        "xinye",
+        "xuchang"
+      ],
+      "x": 0.5,
+      "y": 0.5
+    },
+    {
+      "id": "xinye",
+      "name": "신야",
+      "region": "형주",
+      "adjacent": [
+        "wan",
+        "xiangyang"
+      ],
+      "x": 0.47,
+      "y": 0.53
+    },
+    {
+      "id": "xiangyang",
+      "name": "양양",
+      "region": "형주",
+      "adjacent": [
+        "jiangling",
+        "xinye"
+      ],
+      "x": 0.48,
+      "y": 0.57
+    },
+    {
+      "id": "jiangling",
+      "name": "강릉",
+      "region": "형주",
+      "adjacent": [
+        "chaisang",
+        "changsha",
+        "wuling",
+        "xiangyang",
+        "yongan"
+      ],
+      "x": 0.45,
+      "y": 0.62
+    },
+    {
+      "id": "wuling",
+      "name": "무릉",
+      "region": "형주",
+      "adjacent": [
+        "changsha",
+        "jiangling",
+        "lingling"
+      ],
+      "x": 0.41,
+      "y": 0.66
+    },
+    {
+      "id": "changsha",
+      "name": "장사",
+      "region": "형주",
+      "adjacent": [
+        "chaisang",
+        "guiyang",
+        "jiangling",
+        "lingling",
+        "wuling"
+      ],
+      "x": 0.5,
+      "y": 0.69
+    },
+    {
+      "id": "guiyang",
+      "name": "계양",
+      "region": "형주",
+      "adjacent": [
+        "changsha",
+        "lingling"
+      ],
+      "x": 0.5,
+      "y": 0.76
+    },
+    {
+      "id": "lingling",
+      "name": "영릉",
+      "region": "형주",
+      "adjacent": [
+        "changsha",
+        "guiyang",
+        "wuling"
+      ],
+      "x": 0.43,
+      "y": 0.73
+    },
+    {
+      "id": "shouchun",
+      "name": "수춘",
+      "region": "양주",
+      "adjacent": [
+        "lujiang",
+        "runan",
+        "xiapi"
+      ],
+      "x": 0.61,
+      "y": 0.52
+    },
+    {
+      "id": "lujiang",
+      "name": "여강",
+      "region": "양주",
+      "adjacent": [
+        "chaisang",
+        "jianye",
+        "shouchun"
+      ],
+      "x": 0.61,
+      "y": 0.57
+    },
+    {
+      "id": "jianye",
+      "name": "건업",
+      "region": "양주",
+      "adjacent": [
+        "chaisang",
+        "lujiang",
+        "wu"
+      ],
+      "x": 0.69,
+      "y": 0.55
+    },
+    {
+      "id": "wu",
+      "name": "오",
+      "region": "양주",
+      "adjacent": [
+        "jianye",
+        "kuaiji"
+      ],
+      "x": 0.74,
+      "y": 0.59
+    },
+    {
+      "id": "kuaiji",
+      "name": "회계",
+      "region": "양주",
+      "adjacent": [
+        "wu"
+      ],
+      "x": 0.77,
+      "y": 0.64
+    },
+    {
+      "id": "chaisang",
+      "name": "시상",
+      "region": "양주",
+      "adjacent": [
+        "changsha",
+        "jiangling",
+        "jianye",
+        "lujiang"
+      ],
+      "x": 0.57,
+      "y": 0.61
+    }
   ]
 }

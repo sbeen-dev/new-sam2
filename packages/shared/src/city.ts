@@ -4,6 +4,8 @@ export interface City {
   id: string;
   /** 표시명 (낙양) */
   name: string;
+  /** 소속 지역(주/州 계열, 예: 사예·기주). 표시·그룹핑용 */
+  region: string;
   /** 인접 도시 id (침공·이동 경로). 대칭이어야 함(검증). */
   adjacent: string[];
   /** 지도 좌표(정규화 0..1) */
