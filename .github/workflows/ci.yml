@@ -11,10 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 버전은 package.json의 packageManager("pnpm@…")를 따른다(중복 지정 금지)
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - name: Setup Node
         uses: actions/setup-node@v4
