@@ -1,4 +1,14 @@
-import type { GameState } from '@sam2/shared';
+import type { GameState, DiplomacyStatus } from '@sam2/shared';
+
+/** 두 군주 관계의 정규화 키(정렬 쌍) */
+export function relationKey(a: string, b: string): string {
+  return [a, b].sort().join(':');
+}
+
+/** 두 군주의 외교 상태(기본 neutral) */
+export function getRelation(state: GameState, a: string, b: string): DiplomacyStatus {
+  return state.diplomacy.relations[relationKey(a, b)] ?? 'neutral';
+}
 
 /** 한 군주가 소유한 도시 id 목록 */
 export function citiesOf(state: GameState, lordId: string): string[] {

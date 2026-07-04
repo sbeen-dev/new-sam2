@@ -29,6 +29,16 @@ export const CONFIG = {
   recruit: { goldCost: 100, baseChance: 0.2, chaDivisor: 120 },
   /** 포상 명령: 충성도 상승 */
   reward: { goldCost: 80, loyaltyGain: 10, loyaltyCap: 100 },
+  /** 계략: 지력 기반 비군사 공격 (인접 적 대상) */
+  scheme: {
+    rumor: { goldCost: 60, orderDropPerInt: 0.3, baseChance: 0.25, intDivisor: 150 },
+    sow: { goldCost: 80, loyaltyDropPerInt: 0.3, baseChance: 0.2, intDivisor: 150 },
+    bribe: { goldCost: 200, baseChance: 0.15, intDivisor: 200, loyaltyResist: 0.4 },
+  },
+  /** 외교 */
+  diplomacy: {
+    aidGold: 300, // 원조로 보내는 금
+  },
   /** 월 정산: 세수·수확·군량 소비 */
   economy: {
     taxPerLand: 0.5, // 금 수입 = land * 이 값 (월)

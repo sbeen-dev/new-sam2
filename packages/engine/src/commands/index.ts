@@ -1,7 +1,14 @@
 import type { GameState, Command, GameEvent } from '@sam2/shared';
 import type { DataIndex } from '../data.js';
 import { CONFIG } from '../config.js';
-import { citiesOf, officersInCity, freeOfficersInCity } from '../state.js';
+import {
+  citiesOf,
+  officersInCity,
+  freeOfficersInCity,
+  activeLords,
+  getRelation,
+  relationKey,
+} from '../state.js';
 import { resolveBattle } from '../combat/battle.js';
 import { nextFloat } from '../rng.js';
 
@@ -65,18 +72,70 @@ export function listLegalCommands(state: GameState, idx: DataIndex, lordId: stri
               cityId,
               params: { targetCityId: targetId },
             });
-      // 전쟁: 인접 적/중립 도시 침공
+      // 계략: 인접 적 도시/장수 대상 (유언비어·이간·매수)
+      for (const targetId of cityAdj) {
+        const target = state.cities[targetId]!;
+        if (target.lordId === lordId || target.lordId === null) continue;
+        if (city.gold >= cfg.scheme.rumor.goldCost)
+          cmds.push({
+            type: 'rumor',
+            actorOfficerId: officerId,
+            cityId,
+            params: { targetCityId: targetId },
+          });
+        for (const enemyOid of officersInCity(state, targetId)) {
+          if (state.officers[enemyOid]!.status === 'lord') continue; // 군주는 이간/매수 불가
+          if (city.gold >= cfg.scheme.sow.goldCost)
+            cmds.push({
+              type: 'sow',
+              actorOfficerId: officerId,
+              cityId,
+              params: { targetOfficerId: enemyOid, targetCityId: targetId },
+            });
+          if (city.gold >= cfg.scheme.bribe.goldCost)
+            cmds.push({
+              type: 'bribe',
+              actorOfficerId: officerId,
+              cityId,
+              params: { targetOfficerId: enemyOid, targetCityId: targetId },
+            });
+        }
+      }
+      // 전쟁: 인접 적/중립 도시 침공 (동맹국은 제외)
       if (city.soldiers >= cfg.combat.minInvadeSoldiers) {
         for (const targetId of cityAdj) {
           const target = state.cities[targetId]!;
-          if (target.lordId !== lordId)
-            cmds.push({
-              type: 'invade',
-              actorOfficerId: officerId,
-              cityId,
-              params: { targetCityId: targetId },
-            });
+          if (target.lordId === lordId) continue;
+          if (target.lordId && getRelation(state, lordId, target.lordId) === 'allied') continue;
+          cmds.push({
+            type: 'invade',
+            actorOfficerId: officerId,
+            cityId,
+            params: { targetCityId: targetId },
+          });
         }
+      }
+    }
+    // 외교: 도시당 1회(첫 장수) — 다른 군주와 동맹 / 동맹국 원조
+    const firstOfficer = officersHere[0];
+    if (firstOfficer) {
+      for (const other of activeLords(state)) {
+        if (other === lordId) continue;
+        const rel = getRelation(state, lordId, other);
+        if (rel !== 'allied')
+          cmds.push({
+            type: 'ally',
+            actorOfficerId: firstOfficer,
+            cityId,
+            params: { targetLordId: other },
+          });
+        if (rel === 'allied' && city.gold >= cfg.diplomacy.aidGold)
+          cmds.push({
+            type: 'aid',
+            actorOfficerId: firstOfficer,
+            cityId,
+            params: { targetLordId: other },
+          });
       }
     }
   }
@@ -132,6 +191,16 @@ export function applyCommand(state: GameState, idx: DataIndex, cmd: Command): Ap
       return applyReward(state, idx, cmd);
     case 'move':
       return applyMove(state, idx, cmd);
+    case 'rumor':
+      return applyRumor(state, idx, cmd);
+    case 'sow':
+      return applySow(state, idx, cmd);
+    case 'bribe':
+      return applyBribe(state, idx, cmd);
+    case 'ally':
+      return applyAlly(state, idx, cmd);
+    case 'aid':
+      return applyAid(state, idx, cmd);
     case 'invade':
       return applyInvade(state, idx, cmd);
     default:
@@ -293,6 +362,124 @@ function applyMove(state: GameState, idx: DataIndex, cmd: Command): ApplyResult 
 function nextRoll(s: GameState): { value: number; rng: GameState['rng'] } {
   const r = nextFloat(s.rng);
   return { value: r.value, rng: r.next };
+}
+
+/** 유언비어: 인접 적 도시의 민심을 지력으로 교란. */
+function applyRumor(state: GameState, idx: DataIndex, cmd: Command): ApplyResult {
+  const s = clone(state);
+  const city = s.cities[cmd.cityId]!;
+  const target = s.cities[String(cmd.params.targetCityId)];
+  const actor = idx.officer.get(cmd.actorOfficerId)!;
+  const cfg = CONFIG.scheme.rumor;
+  if (!target || target.lordId === city.lordId || city.gold < cfg.goldCost)
+    return { state, events: [] };
+  city.gold -= cfg.goldCost;
+  const r = nextRoll(s);
+  s.rng = r.rng;
+  const tName = idx.city.get(String(cmd.params.targetCityId))?.name;
+  if (r.value < cfg.baseChance + actor.int / cfg.intDivisor) {
+    const drop = Math.round(actor.int * cfg.orderDropPerInt);
+    target.publicOrder = Math.max(0, target.publicOrder - drop);
+    return {
+      state: s,
+      events: [evt(s, 'scheme', `${actor.name}의 유언비어로 ${tName} 민심 -${drop}`)],
+    };
+  }
+  return { state: s, events: [evt(s, 'schemeFail', `${tName} 유언비어 실패`)] };
+}
+
+/** 이간: 인접 적 장수의 충성도를 지력으로 저하. */
+function applySow(state: GameState, idx: DataIndex, cmd: Command): ApplyResult {
+  const s = clone(state);
+  const city = s.cities[cmd.cityId]!;
+  const actor = idx.officer.get(cmd.actorOfficerId)!;
+  const target = s.officers[String(cmd.params.targetOfficerId)];
+  const cfg = CONFIG.scheme.sow;
+  if (!target || target.lordId === city.lordId || city.gold < cfg.goldCost)
+    return { state, events: [] };
+  city.gold -= cfg.goldCost;
+  const r = nextRoll(s);
+  s.rng = r.rng;
+  const tName = idx.officer.get(String(cmd.params.targetOfficerId))?.name;
+  if (r.value < cfg.baseChance + actor.int / cfg.intDivisor) {
+    const drop = Math.round(actor.int * cfg.loyaltyDropPerInt);
+    target.loyalty = Math.max(0, target.loyalty - drop);
+    return {
+      state: s,
+      events: [evt(s, 'scheme', `${actor.name}의 이간으로 ${tName} 충성 -${drop}`)],
+    };
+  }
+  return { state: s, events: [evt(s, 'schemeFail', `${tName} 이간 실패`)] };
+}
+
+/** 매수: 금과 지력으로 인접 적 장수를 포섭(성공 시 아군으로 전향, 낮은 충성일수록 쉬움). */
+function applyBribe(state: GameState, idx: DataIndex, cmd: Command): ApplyResult {
+  const s = clone(state);
+  const city = s.cities[cmd.cityId]!;
+  const actor = idx.officer.get(cmd.actorOfficerId)!;
+  const targetId = String(cmd.params.targetOfficerId);
+  const target = s.officers[targetId];
+  const cfg = CONFIG.scheme.bribe;
+  if (
+    !target ||
+    target.lordId === city.lordId ||
+    target.status === 'lord' ||
+    city.gold < cfg.goldCost
+  )
+    return { state, events: [] };
+  city.gold -= cfg.goldCost;
+  const r = nextRoll(s);
+  s.rng = r.rng;
+  const tName = idx.officer.get(targetId)?.name;
+  const chance =
+    cfg.baseChance + actor.int / cfg.intDivisor - (target.loyalty / 100) * cfg.loyaltyResist;
+  if (r.value < chance) {
+    target.lordId = city.lordId;
+    target.status = 'officer';
+    target.cityId = cmd.cityId;
+    target.loyalty = CONFIG.loyalty.officerInit;
+    return {
+      state: s,
+      events: [evt(s, 'bribe', `${actor.name}이(가) ${tName}을(를) 매수해 전향시켰다`)],
+    };
+  }
+  return { state: s, events: [evt(s, 'schemeFail', `${tName} 매수 실패`)] };
+}
+
+/** 동맹: 상대 군주와 상호 동맹(불가침) 관계 성립. */
+function applyAlly(state: GameState, idx: DataIndex, cmd: Command): ApplyResult {
+  const s = clone(state);
+  const city = s.cities[cmd.cityId]!;
+  const other = String(cmd.params.targetLordId);
+  if (!city.lordId || !s.lords[other]) return { state, events: [] };
+  s.diplomacy.relations[relationKey(city.lordId, other)] = 'allied';
+  return {
+    state: s,
+    events: [
+      evt(
+        s,
+        'ally',
+        `${idx.officer.get(city.lordId)?.name}·${idx.officer.get(other)?.name} 동맹 체결`,
+      ),
+    ],
+  };
+}
+
+/** 원조: 동맹국 수도에 금을 보낸다. */
+function applyAid(state: GameState, idx: DataIndex, cmd: Command): ApplyResult {
+  const s = clone(state);
+  const city = s.cities[cmd.cityId]!;
+  const other = String(cmd.params.targetLordId);
+  const amount = CONFIG.diplomacy.aidGold;
+  if (city.gold < amount) return { state, events: [] };
+  const otherCity = Object.values(s.cities).find((c) => c.lordId === other);
+  if (!otherCity) return { state, events: [] };
+  city.gold -= amount;
+  otherCity.gold += amount;
+  return {
+    state: s,
+    events: [evt(s, 'aid', `${idx.officer.get(other)?.name}에게 금 ${amount} 원조`)],
+  };
 }
 
 function applyInvade(state: GameState, idx: DataIndex, cmd: Command): ApplyResult {

@@ -13,6 +13,8 @@ export {
   freeOfficersInCity,
   activeLords,
   checkVictory,
+  getRelation,
+  relationKey,
 } from './state.js';
 export { listLegalCommands, applyCommand } from './commands/index.js';
 export type { ApplyResult } from './commands/index.js';

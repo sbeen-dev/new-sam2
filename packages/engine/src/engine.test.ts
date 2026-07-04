@@ -126,6 +126,51 @@ describe('확장 명령', () => {
   });
 });
 
+describe('계략·외교', () => {
+  it('이간은 인접 적 장수의 충성을 낮춘다(성공 시)', () => {
+    // 동탁(낙양)에서 인접 조조령 진류의 장수를 이간. 성공할 seed를 찾는다.
+    for (let seed = 1; seed < 40; seed++) {
+      const s = newGame(seed);
+      const cmd = listLegalCommands(s, idx, 'dong_zhuo').find((c) => c.type === 'sow');
+      if (!cmd) continue;
+      const targetId = String(cmd.params.targetOfficerId);
+      const before = s.officers[targetId]!.loyalty;
+      const r = applyCommand(s, idx, cmd);
+      if (r.events.some((e) => e.kind === 'scheme')) {
+        expect(r.state.officers[targetId]!.loyalty).toBeLessThan(before);
+        return;
+      }
+    }
+    throw new Error('이간 성공 케이스를 찾지 못함');
+  });
+
+  it('동맹은 상호 관계를 allied로 만들고 침공 대상에서 제외', () => {
+    const s = newGame();
+    const cmd = listLegalCommands(s, idx, 'dong_zhuo').find(
+      (c) => c.type === 'ally' && c.params.targetLordId === 'yuan_shao',
+    );
+    expect(cmd).toBeTruthy();
+    const r = applyCommand(s, idx, cmd!);
+    expect(r.state.diplomacy.relations['dong_zhuo:yuan_shao']).toBe('allied');
+  });
+
+  it('매수는 성공 시 적 장수를 아군으로 전향', () => {
+    for (let seed = 1; seed < 60; seed++) {
+      const s = newGame(seed);
+      const cmd = listLegalCommands(s, idx, 'dong_zhuo').find((c) => c.type === 'bribe');
+      if (!cmd) continue;
+      const targetId = String(cmd.params.targetOfficerId);
+      const r = applyCommand(s, idx, cmd);
+      if (r.events.some((e) => e.kind === 'bribe')) {
+        expect(r.state.officers[targetId]!.lordId).toBe('dong_zhuo');
+        expect(r.state.officers[targetId]!.status).toBe('officer');
+        return;
+      }
+    }
+    throw new Error('매수 성공 케이스를 찾지 못함');
+  });
+});
+
 describe('정산', () => {
   it('세수로 금이 늘고 달이 진행된다', () => {
     const s = newGame();

@@ -287,6 +287,14 @@ body {
 .ev-move {
   border-left-color: #7d7d8a;
 }
+.ev-scheme,
+.ev-bribe {
+  border-left-color: #9c7fb0;
+}
+.ev-ally,
+.ev-aid {
+  border-left-color: #5a9367;
+}
 .ev.muted {
   color: var(--muted);
   background: transparent;

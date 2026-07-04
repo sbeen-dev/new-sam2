@@ -199,7 +199,7 @@ function dedupeCommands(cmds: Command[]): Command[] {
   const seen = new Set<string>();
   const out: Command[] = [];
   for (const c of cmds) {
-    const key = `${c.type}:${c.params.targetCityId ?? ''}:${c.params.targetOfficerId ?? ''}`;
+    const key = `${c.type}:${c.params.targetCityId ?? ''}:${c.params.targetOfficerId ?? ''}:${c.params.targetLordId ?? ''}`;
     if (seen.has(key)) continue;
     seen.add(key);
     out.push(c);
@@ -229,6 +229,16 @@ function commandLabel(
       return `🎁 포상 → ${name(String(c.params.targetOfficerId))}`;
     case 'move':
       return `➡️ 이동 → ${city(String(c.params.targetCityId))?.name ?? c.params.targetCityId}`;
+    case 'rumor':
+      return `🗣️ 유언비어 → ${city(String(c.params.targetCityId))?.name ?? c.params.targetCityId}`;
+    case 'sow':
+      return `🎭 이간 → ${name(String(c.params.targetOfficerId))}`;
+    case 'bribe':
+      return `💰 매수 → ${name(String(c.params.targetOfficerId))}`;
+    case 'ally':
+      return `🤝 동맹 → ${name(String(c.params.targetLordId))}`;
+    case 'aid':
+      return `📦 원조 → ${name(String(c.params.targetLordId))}`;
     case 'invade':
       return `🏴 침공 → ${city(String(c.params.targetCityId))?.name ?? c.params.targetCityId}`;
     default:
