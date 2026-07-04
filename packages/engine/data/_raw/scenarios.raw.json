@@ -1,0 +1,503 @@
+{
+  "_meta": {
+    "note": "시나리오 원천(compact). 도시는 tier(capital/big/mid/small/frontier) 표기 + 필요 필드 override. build-scenarios.mjs로 scenarios.json 생성. 세력 배치는 각 연도 판도의 근사이며 대표 거점 위주(나머지 중립). 장수 배치는 해당 연도 생존/소속 통설 기준(연의 포함).",
+    "buildTo": "packages/engine/data/scenarios.json"
+  },
+  "scenarios": [
+    {
+      "id": "s1_189",
+      "year": 189,
+      "title": "반동탁 연합",
+      "playableLords": [
+        "dong_zhuo",
+        "cao_cao",
+        "yuan_shao",
+        "sun_jian",
+        "liu_bei",
+        "gongsun_zan",
+        "yuan_shu",
+        "liu_biao",
+        "ma_teng",
+        "tao_qian",
+        "liu_zhang"
+      ],
+      "lords": [
+        {
+          "lordId": "dong_zhuo",
+          "officers": ["dong_zhuo", "lu_bu", "hua_xiong", "jia_xu"],
+          "cities": [
+            { "cityId": "luoyang", "tier": "capital", "publicOrder": 40 },
+            { "cityId": "chang_an", "tier": "big", "publicOrder": 44 }
+          ]
+        },
+        {
+          "lordId": "yuan_shao",
+          "officers": ["yuan_shao", "yan_liang", "wen_chou", "tian_feng", "ju_shou"],
+          "cities": [{ "cityId": "ye", "tier": "capital", "publicOrder": 62 }]
+        },
+        {
+          "lordId": "cao_cao",
+          "officers": ["cao_cao", "xiahou_dun", "xiahou_yuan", "cao_ren", "cheng_yu"],
+          "cities": [{ "cityId": "chenliu", "tier": "mid", "publicOrder": 63 }]
+        },
+        {
+          "lordId": "gongsun_zan",
+          "officers": ["gongsun_zan", "zhao_yun"],
+          "cities": [{ "cityId": "beiping", "tier": "mid", "publicOrder": 58 }]
+        },
+        {
+          "lordId": "liu_bei",
+          "officers": ["liu_bei", "guan_yu", "zhang_fei"],
+          "cities": [{ "cityId": "pingyuan", "tier": "small", "soldiers": 3500, "publicOrder": 68 }]
+        },
+        {
+          "lordId": "sun_jian",
+          "officers": ["sun_jian", "sun_ce", "huang_gai", "cheng_pu"],
+          "cities": [{ "cityId": "changsha", "tier": "mid", "publicOrder": 64 }]
+        },
+        {
+          "lordId": "yuan_shu",
+          "officers": ["yuan_shu"],
+          "cities": [{ "cityId": "wan", "tier": "mid", "publicOrder": 55 }]
+        },
+        {
+          "lordId": "liu_biao",
+          "officers": ["liu_biao"],
+          "cities": [{ "cityId": "xiangyang", "tier": "big", "publicOrder": 66 }]
+        },
+        {
+          "lordId": "tao_qian",
+          "officers": ["tao_qian"],
+          "cities": [{ "cityId": "xiapi", "tier": "mid", "publicOrder": 60 }]
+        },
+        {
+          "lordId": "ma_teng",
+          "officers": ["ma_teng", "ma_chao"],
+          "cities": [
+            { "cityId": "jincheng", "tier": "frontier", "soldiers": 7000, "publicOrder": 52 }
+          ]
+        },
+        {
+          "lordId": "liu_zhang",
+          "officers": ["liu_zhang"],
+          "cities": [{ "cityId": "chengdu", "tier": "capital", "publicOrder": 67 }]
+        }
+      ]
+    },
+    {
+      "id": "s2_194",
+      "year": 194,
+      "title": "군웅할거",
+      "playableLords": [
+        "cao_cao",
+        "lu_bu",
+        "liu_bei",
+        "yuan_shao",
+        "yuan_shu",
+        "sun_ce",
+        "liu_biao",
+        "liu_zhang",
+        "ma_teng",
+        "gongsun_zan"
+      ],
+      "lords": [
+        {
+          "lordId": "cao_cao",
+          "officers": [
+            "cao_cao",
+            "xiahou_dun",
+            "xiahou_yuan",
+            "cao_ren",
+            "xun_yu",
+            "guo_jia",
+            "dian_wei",
+            "cheng_yu"
+          ],
+          "cities": [
+            { "cityId": "chenliu", "tier": "mid" },
+            { "cityId": "puyang", "tier": "mid" }
+          ]
+        },
+        {
+          "lordId": "lu_bu",
+          "officers": ["lu_bu", "chen_gong", "zhang_liao"],
+          "cities": [{ "cityId": "xiapi", "tier": "mid" }]
+        },
+        {
+          "lordId": "liu_bei",
+          "officers": ["liu_bei", "guan_yu", "zhang_fei"],
+          "cities": [{ "cityId": "xiaopei", "tier": "small" }]
+        },
+        {
+          "lordId": "yuan_shao",
+          "officers": ["yuan_shao", "yan_liang", "wen_chou", "tian_feng", "ju_shou", "zhang_he"],
+          "cities": [
+            { "cityId": "ye", "tier": "capital" },
+            { "cityId": "nanpi", "tier": "mid" }
+          ]
+        },
+        {
+          "lordId": "yuan_shu",
+          "officers": ["yuan_shu"],
+          "cities": [
+            { "cityId": "shouchun", "tier": "mid" },
+            { "cityId": "wan", "tier": "mid" }
+          ]
+        },
+        {
+          "lordId": "sun_ce",
+          "officers": ["sun_ce", "zhou_yu", "huang_gai", "cheng_pu", "taishi_ci"],
+          "cities": [
+            { "cityId": "jianye", "tier": "mid" },
+            { "cityId": "wu", "tier": "small" }
+          ]
+        },
+        {
+          "lordId": "liu_biao",
+          "officers": ["liu_biao"],
+          "cities": [
+            { "cityId": "xiangyang", "tier": "mid" },
+            { "cityId": "jiangling", "tier": "mid" }
+          ]
+        },
+        {
+          "lordId": "liu_zhang",
+          "officers": ["liu_zhang", "fa_zheng"],
+          "cities": [
+            { "cityId": "chengdu", "tier": "capital" },
+            { "cityId": "zitong", "tier": "small" }
+          ]
+        },
+        {
+          "lordId": "ma_teng",
+          "officers": ["ma_teng", "ma_chao"],
+          "cities": [
+            { "cityId": "jincheng", "tier": "frontier" },
+            { "cityId": "wuwei", "tier": "frontier" }
+          ]
+        },
+        {
+          "lordId": "gongsun_zan",
+          "officers": ["gongsun_zan", "zhao_yun"],
+          "cities": [{ "cityId": "beiping", "tier": "mid" }]
+        }
+      ]
+    },
+    {
+      "id": "s3_201",
+      "year": 201,
+      "title": "관도 이후",
+      "playableLords": [
+        "cao_cao",
+        "yuan_shao",
+        "liu_bei",
+        "sun_quan",
+        "liu_biao",
+        "liu_zhang",
+        "ma_teng"
+      ],
+      "lords": [
+        {
+          "lordId": "cao_cao",
+          "officers": [
+            "cao_cao",
+            "xiahou_dun",
+            "xiahou_yuan",
+            "cao_ren",
+            "zhang_liao",
+            "xu_huang",
+            "xun_yu",
+            "guo_jia",
+            "cheng_yu",
+            "jia_xu",
+            "xu_chu"
+          ],
+          "cities": [
+            { "cityId": "xuchang", "tier": "capital" },
+            { "cityId": "luoyang", "tier": "mid" },
+            { "cityId": "chenliu", "tier": "mid" },
+            { "cityId": "puyang", "tier": "mid" }
+          ]
+        },
+        {
+          "lordId": "yuan_shao",
+          "officers": ["yuan_shao"],
+          "cities": [
+            { "cityId": "ye", "tier": "capital" },
+            { "cityId": "nanpi", "tier": "mid" },
+            { "cityId": "pingyuan", "tier": "mid" },
+            { "cityId": "jinyang", "tier": "mid" }
+          ]
+        },
+        {
+          "lordId": "liu_bei",
+          "officers": ["liu_bei", "guan_yu", "zhang_fei", "zhao_yun"],
+          "cities": [{ "cityId": "xinye", "tier": "small" }]
+        },
+        {
+          "lordId": "sun_quan",
+          "officers": [
+            "sun_quan",
+            "zhou_yu",
+            "lu_su",
+            "taishi_ci",
+            "huang_gai",
+            "cheng_pu",
+            "zhang_zhao"
+          ],
+          "cities": [
+            { "cityId": "jianye", "tier": "mid" },
+            { "cityId": "wu", "tier": "small" },
+            { "cityId": "kuaiji", "tier": "small" },
+            { "cityId": "chaisang", "tier": "small" }
+          ]
+        },
+        {
+          "lordId": "liu_biao",
+          "officers": ["liu_biao"],
+          "cities": [
+            { "cityId": "xiangyang", "tier": "mid" },
+            { "cityId": "jiangling", "tier": "mid" },
+            { "cityId": "changsha", "tier": "small" }
+          ]
+        },
+        {
+          "lordId": "liu_zhang",
+          "officers": ["liu_zhang", "fa_zheng"],
+          "cities": [
+            { "cityId": "chengdu", "tier": "capital" },
+            { "cityId": "zitong", "tier": "small" },
+            { "cityId": "jiangzhou", "tier": "small" }
+          ]
+        },
+        {
+          "lordId": "ma_teng",
+          "officers": ["ma_teng", "ma_chao"],
+          "cities": [
+            { "cityId": "jincheng", "tier": "frontier" },
+            { "cityId": "wuwei", "tier": "frontier" },
+            { "cityId": "tianshui", "tier": "small" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s4_208",
+      "year": 208,
+      "title": "적벽대전",
+      "playableLords": ["cao_cao", "liu_bei", "sun_quan", "liu_zhang", "ma_teng"],
+      "lords": [
+        {
+          "lordId": "cao_cao",
+          "officers": [
+            "cao_cao",
+            "xiahou_dun",
+            "xiahou_yuan",
+            "cao_ren",
+            "zhang_liao",
+            "xu_huang",
+            "zhang_he",
+            "xu_chu",
+            "xun_yu",
+            "jia_xu",
+            "cheng_yu",
+            "sima_yi"
+          ],
+          "cities": [
+            { "cityId": "xuchang", "tier": "capital" },
+            { "cityId": "luoyang", "tier": "mid" },
+            { "cityId": "ye", "tier": "big" },
+            { "cityId": "wan", "tier": "mid" },
+            { "cityId": "xiangyang", "tier": "mid" },
+            { "cityId": "chang_an", "tier": "big" }
+          ]
+        },
+        {
+          "lordId": "liu_bei",
+          "officers": ["liu_bei", "guan_yu", "zhang_fei", "zhao_yun", "zhuge_liang"],
+          "cities": [
+            { "cityId": "jiangling", "tier": "mid" },
+            { "cityId": "wuling", "tier": "small" }
+          ]
+        },
+        {
+          "lordId": "sun_quan",
+          "officers": [
+            "sun_quan",
+            "zhou_yu",
+            "lu_su",
+            "lu_meng",
+            "gan_ning",
+            "huang_gai",
+            "zhou_tai",
+            "zhang_zhao"
+          ],
+          "cities": [
+            { "cityId": "jianye", "tier": "mid" },
+            { "cityId": "wu", "tier": "small" },
+            { "cityId": "kuaiji", "tier": "small" },
+            { "cityId": "chaisang", "tier": "mid" },
+            { "cityId": "lujiang", "tier": "small" },
+            { "cityId": "shouchun", "tier": "mid" }
+          ]
+        },
+        {
+          "lordId": "liu_zhang",
+          "officers": ["liu_zhang", "fa_zheng", "pang_tong"],
+          "cities": [
+            { "cityId": "chengdu", "tier": "capital" },
+            { "cityId": "zitong", "tier": "small" },
+            { "cityId": "jiangzhou", "tier": "small" },
+            { "cityId": "yongan", "tier": "small" }
+          ]
+        },
+        {
+          "lordId": "ma_teng",
+          "officers": ["ma_teng", "ma_chao"],
+          "cities": [
+            { "cityId": "jincheng", "tier": "frontier" },
+            { "cityId": "wuwei", "tier": "frontier" },
+            { "cityId": "tianshui", "tier": "small" },
+            { "cityId": "anding", "tier": "small" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s5_215",
+      "year": 215,
+      "title": "삼국 정립 직전",
+      "playableLords": ["cao_cao", "liu_bei", "sun_quan"],
+      "lords": [
+        {
+          "lordId": "cao_cao",
+          "officers": [
+            "cao_cao",
+            "xiahou_dun",
+            "cao_ren",
+            "zhang_liao",
+            "xu_huang",
+            "zhang_he",
+            "xu_chu",
+            "jia_xu",
+            "sima_yi"
+          ],
+          "cities": [
+            { "cityId": "xuchang", "tier": "capital" },
+            { "cityId": "luoyang", "tier": "mid" },
+            { "cityId": "chang_an", "tier": "big" },
+            { "cityId": "ye", "tier": "big" },
+            { "cityId": "wan", "tier": "mid" },
+            { "cityId": "xiangyang", "tier": "mid" },
+            { "cityId": "hanzhong", "tier": "mid" },
+            { "cityId": "nanpi", "tier": "mid" }
+          ]
+        },
+        {
+          "lordId": "liu_bei",
+          "officers": [
+            "liu_bei",
+            "guan_yu",
+            "zhang_fei",
+            "zhao_yun",
+            "ma_chao",
+            "huang_zhong",
+            "zhuge_liang",
+            "fa_zheng",
+            "wei_yan"
+          ],
+          "cities": [
+            { "cityId": "chengdu", "tier": "capital" },
+            { "cityId": "zitong", "tier": "small" },
+            { "cityId": "jiangzhou", "tier": "small" },
+            { "cityId": "yongan", "tier": "small" },
+            { "cityId": "jiangling", "tier": "mid" }
+          ]
+        },
+        {
+          "lordId": "sun_quan",
+          "officers": [
+            "sun_quan",
+            "lu_su",
+            "lu_meng",
+            "gan_ning",
+            "lu_xun",
+            "zhou_tai",
+            "zhang_zhao"
+          ],
+          "cities": [
+            { "cityId": "jianye", "tier": "mid" },
+            { "cityId": "wu", "tier": "small" },
+            { "cityId": "kuaiji", "tier": "small" },
+            { "cityId": "chaisang", "tier": "mid" },
+            { "cityId": "lujiang", "tier": "small" },
+            { "cityId": "shouchun", "tier": "mid" },
+            { "cityId": "changsha", "tier": "small" },
+            { "cityId": "guiyang", "tier": "small" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s6_220",
+      "year": 220,
+      "title": "삼국 정립",
+      "playableLords": ["cao_cao", "liu_bei", "sun_quan"],
+      "lords": [
+        {
+          "lordId": "cao_cao",
+          "officers": [
+            "cao_cao",
+            "xiahou_dun",
+            "zhang_liao",
+            "xu_huang",
+            "zhang_he",
+            "xu_chu",
+            "sima_yi",
+            "jia_xu"
+          ],
+          "cities": [
+            { "cityId": "xuchang", "tier": "capital" },
+            { "cityId": "luoyang", "tier": "big" },
+            { "cityId": "chang_an", "tier": "big" },
+            { "cityId": "ye", "tier": "big" },
+            { "cityId": "wan", "tier": "mid" },
+            { "cityId": "xiangyang", "tier": "mid" },
+            { "cityId": "nanpi", "tier": "mid" },
+            { "cityId": "jinyang", "tier": "mid" },
+            { "cityId": "anding", "tier": "small" },
+            { "cityId": "tianshui", "tier": "small" }
+          ]
+        },
+        {
+          "lordId": "liu_bei",
+          "officers": ["liu_bei", "zhang_fei", "zhao_yun", "ma_chao", "zhuge_liang", "wei_yan"],
+          "cities": [
+            { "cityId": "chengdu", "tier": "capital" },
+            { "cityId": "zitong", "tier": "small" },
+            { "cityId": "jiangzhou", "tier": "small" },
+            { "cityId": "yongan", "tier": "small" },
+            { "cityId": "hanzhong", "tier": "mid" }
+          ]
+        },
+        {
+          "lordId": "sun_quan",
+          "officers": ["sun_quan", "lu_xun", "gan_ning", "zhou_tai", "zhang_zhao"],
+          "cities": [
+            { "cityId": "jianye", "tier": "mid" },
+            { "cityId": "wu", "tier": "small" },
+            { "cityId": "kuaiji", "tier": "small" },
+            { "cityId": "chaisang", "tier": "mid" },
+            { "cityId": "lujiang", "tier": "small" },
+            { "cityId": "shouchun", "tier": "mid" },
+            { "cityId": "jiangling", "tier": "mid" },
+            { "cityId": "changsha", "tier": "small" },
+            { "cityId": "guiyang", "tier": "small" },
+            { "cityId": "wuling", "tier": "small" },
+            { "cityId": "lingling", "tier": "small" }
+          ]
+        }
+      ]
+    }
+  ]
+}

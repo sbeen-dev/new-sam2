@@ -1,0 +1,653 @@
+:root {
+  --bg: #16161c;
+  --panel: #1e1e26;
+  --panel2: #252530;
+  --line: #33333f;
+  --text: #e8e6df;
+  --muted: #9a988f;
+  --accent: #ffd54a;
+  font-family: 'Noto Sans KR', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ===== 시작 화면 ===== */
+.start {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px;
+  text-align: center;
+}
+.start h1 {
+  font-size: 2.6rem;
+  margin: 0 0 4px;
+  letter-spacing: 4px;
+}
+.subtitle {
+  color: var(--muted);
+  margin-bottom: 40px;
+}
+.scenario-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 24px 0 8px;
+}
+.tab {
+  padding: 8px 14px;
+  background: var(--panel);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.tab.active {
+  background: var(--accent);
+  color: #1a1a1a;
+  border-color: var(--accent);
+  font-weight: 700;
+}
+.tab:hover:not(.active) {
+  color: var(--text);
+}
+.lord-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+.lord-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 10px;
+  background: var(--panel);
+  color: var(--text);
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition:
+    transform 0.1s,
+    background 0.15s;
+}
+.lord-card:hover {
+  transform: translateY(-2px);
+  background: var(--panel2);
+}
+.start-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.observe {
+  padding: 12px 22px;
+  background: transparent;
+  color: var(--muted);
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.observe:hover {
+  color: var(--text);
+}
+
+/* 신군주 폼 */
+.custom-form {
+  max-width: 440px;
+  margin: 20px auto 0;
+  text-align: left;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 24px;
+}
+.custom-form h2 {
+  text-align: center;
+  margin-top: 0;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 14px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.text-input {
+  padding: 9px 12px;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 1rem;
+}
+.stat-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.stat-label {
+  width: 40px;
+  color: var(--muted);
+}
+.stat-row input[type='range'] {
+  flex: 1;
+  accent-color: var(--accent);
+}
+.stat-val {
+  width: 30px;
+  text-align: right;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.budget {
+  text-align: center;
+  padding: 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 14px;
+}
+.budget.over {
+  color: #e08a8a;
+  font-weight: 700;
+}
+.custom-form .lord-card:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 28px;
+  line-height: 1.5;
+}
+.dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+/* ===== 게임 화면 ===== */
+.game {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  height: 100vh;
+}
+.map-pane {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: radial-gradient(circle at 50% 40%, #1c1c24, #121218);
+  min-width: 0;
+}
+.map {
+  width: 100%;
+  height: 100%;
+  max-height: 96vh;
+}
+.map .sea {
+  fill: #132430;
+}
+.map .land {
+  fill: #23281c;
+  stroke: #3b4a39;
+  stroke-width: 2;
+  stroke-opacity: 0.7;
+}
+.map .mtn {
+  fill: #3a3d2e;
+  stroke: #4b4e3c;
+  stroke-width: 1;
+}
+.map .river {
+  stroke-width: 5;
+  stroke-linecap: round;
+  opacity: 0.5;
+}
+.map .river.yellow {
+  stroke: #b0863a;
+}
+.map .river.yangtze {
+  stroke: #3f7391;
+}
+.map .edge {
+  stroke: #55635a;
+  stroke-width: 1.4;
+  stroke-opacity: 0.7;
+}
+.map .node {
+  cursor: pointer;
+}
+.map .label {
+  fill: #d8d6cf;
+  font-size: 13px;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: #121218;
+  stroke-width: 3px;
+}
+.map .flash-ring {
+  stroke: #ffd54a;
+  stroke-width: 3;
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: flashpulse 1.4s ease-out forwards;
+}
+@keyframes flashpulse {
+  0% {
+    stroke-opacity: 0.95;
+    transform: scale(1);
+  }
+  100% {
+    stroke-opacity: 0;
+    transform: scale(3.2);
+  }
+}
+
+.sidebar {
+  background: var(--panel);
+  border-left: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.hud {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.hud .date {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.hud .me {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 6px 0 10px;
+}
+.next {
+  width: 100%;
+  padding: 12px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  background: var(--accent);
+  color: #1a1a1a;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.next:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.controls {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.controls button {
+  flex: 1;
+  padding: 6px 4px;
+  font-size: 0.8rem;
+  background: var(--panel2);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.controls button:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--accent);
+}
+.controls button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.victory {
+  padding: 14px;
+  background: #3a2f10;
+  color: var(--accent);
+  text-align: center;
+  font-weight: 700;
+}
+
+.panel {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.panel h3 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+}
+.owner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.stats {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.stats b {
+  color: var(--text);
+  float: right;
+}
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 1.5px solid rgba(0, 0, 0, 0.35);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+.officers {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+.officer {
+  margin-bottom: 5px;
+}
+.officer-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 5px 8px;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+.officer-head:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+.officer-head:disabled {
+  cursor: default;
+  opacity: 0.85;
+}
+.officer.done .officer-head {
+  opacity: 0.6;
+}
+.oname {
+  flex: 1;
+  font-size: 0.92rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.ostats {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.tag {
+  font-size: 0.62rem;
+  padding: 1px 5px;
+  border-radius: 999px;
+}
+.tag.lord {
+  background: #3a2f10;
+  color: var(--accent);
+}
+.tag.cap {
+  background: #3a1010;
+  color: #e08a8a;
+}
+.tag.ok {
+  color: #5a9367;
+}
+.portrait {
+  flex-shrink: 0;
+  border-radius: 8px;
+}
+.ocommands {
+  padding: 6px 0 2px 10px;
+}
+.odetail {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 2px 12px;
+}
+.odetail-info {
+  font-size: 0.85rem;
+}
+.epithet {
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.odetail-stats {
+  color: var(--text);
+}
+.odetail-sub {
+  color: var(--muted);
+  font-size: 0.78rem;
+  margin-top: 3px;
+}
+.none {
+  font-size: 0.8rem;
+  color: var(--muted);
+  padding: 4px;
+}
+.hint-inline {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 8px;
+  line-height: 1.4;
+}
+.commands {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+.cmd-title {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.cmd {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 9px 12px;
+  margin-bottom: 6px;
+  background: var(--panel2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  cursor: pointer;
+}
+.cmd:hover {
+  border-color: var(--accent);
+}
+
+.log {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px;
+}
+.log h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+.log ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.log .ev {
+  font-size: 0.85rem;
+  padding: 5px 8px;
+  border-left: 3px solid var(--line);
+  margin-bottom: 4px;
+  color: var(--text);
+  background: var(--panel2);
+  border-radius: 0 4px 4px 0;
+}
+.ev-conquer {
+  border-left-color: #d06a3b;
+}
+.ev-lordFall {
+  border-left-color: #b23b3b;
+  color: var(--accent);
+}
+.ev-repelled {
+  border-left-color: #5b8fa6;
+}
+.ev-duel {
+  border-left-color: #c0504d;
+}
+.ev-recruit {
+  border-left-color: #3b9e6f;
+}
+.ev-move {
+  border-left-color: #7d7d8a;
+}
+.ev-scheme,
+.ev-bribe {
+  border-left-color: #9c7fb0;
+}
+.ev-ally,
+.ev-aid {
+  border-left-color: #5a9367;
+}
+.ev-item,
+.ev-growth {
+  border-left-color: #d0a24c;
+}
+.ev-flood,
+.ev-plague {
+  border-left-color: #4c8fb0;
+}
+.ev-death,
+.ev-succession {
+  border-left-color: #b23b3b;
+}
+.ev-capture,
+.ev-execute {
+  border-left-color: #9c7fb0;
+}
+.ev.muted {
+  color: var(--muted);
+  background: transparent;
+}
+
+/* ===== 전투 모달 ===== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fadein 0.2s ease;
+}
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+}
+.battle-modal {
+  width: min(420px, 90vw);
+  background: var(--panel);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 22px;
+  text-align: center;
+  animation: pop 0.25s cubic-bezier(0.2, 1.4, 0.5, 1);
+}
+@keyframes pop {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+}
+.battle-modal.win {
+  border-color: #d0a24c;
+}
+.battle-modal.lose {
+  border-color: #5b8fa6;
+}
+.battle-head {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.battle-duel {
+  background: var(--panel2);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 12px;
+  color: #e0b0ae;
+}
+.battle-body {
+  color: var(--text);
+  line-height: 1.6;
+}
+.battle-extra {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-top: 6px;
+}
+.battle-extra.gold {
+  color: var(--accent);
+}
+.battle-close {
+  margin-top: 18px;
+  padding: 10px 30px;
+  background: var(--accent);
+  color: #1a1a1a;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ===== 반응형(좁은 화면) ===== */
+@media (max-width: 860px) {
+  .game {
+    grid-template-columns: 1fr;
+    grid-template-rows: 45vh 1fr;
+    height: auto;
+    min-height: 100vh;
+  }
+  .sidebar {
+    border-left: none;
+    border-top: 1px solid var(--line);
+  }
+  .start h1 {
+    font-size: 2rem;
+  }
+}

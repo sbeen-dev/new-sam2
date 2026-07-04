@@ -1,0 +1,9 @@
+node_modules/
+dist/
+build/
+pnpm-lock.yaml
+*.tsbuildinfo
+
+# 생성 산출물(build 스크립트가 만듦) — 원천은 _raw/, 여기선 포맷 대상 아님
+packages/engine/data/cities.json
+packages/engine/data/scenarios.json

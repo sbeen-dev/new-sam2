@@ -1,0 +1,48 @@
+name: deploy
+
+# main에 머지되면 웹앱을 빌드해 GitHub Pages에 배포한다.
+# (사전 준비: 저장소 Settings → Pages → Source = "GitHub Actions")
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 동시 배포 1개로 제한
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build web (Pages base path)
+        run: pnpm --filter @sam2/web build
+        env:
+          VITE_BASE: /new-sam2/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

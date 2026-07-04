@@ -1,0 +1,692 @@
+{
+  "_meta": {
+    "note": "역사 기반 자체 산정 로스터. 능력치는 docs/data/stat-methodology.md의 밴드/근거로 산출(원작 KOEI 수치 아님). compat(상성)은 세력 친화도 기반 0..15(원형 거리로 궁합 판정). 생몰 연도는 정사/통설 근사. 밸런싱 튜닝은 별도.",
+    "statScale": "1..100 (int=지력, war=무력, cha=매력), compat 0..15",
+    "source": "역사 인물(공유 자산) + stat-methodology 룰"
+  },
+  "officers": [
+    {
+      "id": "cao_cao",
+      "name": "조조",
+      "int": 91,
+      "war": 72,
+      "cha": 95,
+      "compat": 8,
+      "bornYear": 155,
+      "diedYear": 220
+    },
+    {
+      "id": "cao_pi",
+      "name": "조비",
+      "int": 82,
+      "war": 68,
+      "cha": 78,
+      "compat": 8,
+      "bornYear": 187,
+      "diedYear": 226
+    },
+    {
+      "id": "cao_zhang",
+      "name": "조창",
+      "int": 40,
+      "war": 90,
+      "cha": 66,
+      "compat": 8,
+      "bornYear": 189,
+      "diedYear": 223
+    },
+    {
+      "id": "xiahou_dun",
+      "name": "하후돈",
+      "int": 58,
+      "war": 88,
+      "cha": 80,
+      "compat": 8,
+      "bornYear": 157,
+      "diedYear": 220
+    },
+    {
+      "id": "xiahou_yuan",
+      "name": "하후연",
+      "int": 65,
+      "war": 89,
+      "cha": 72,
+      "compat": 8,
+      "bornYear": 160,
+      "diedYear": 219
+    },
+    {
+      "id": "cao_ren",
+      "name": "조인",
+      "int": 68,
+      "war": 86,
+      "cha": 78,
+      "compat": 8,
+      "bornYear": 168,
+      "diedYear": 223
+    },
+    {
+      "id": "xun_yu",
+      "name": "순욱",
+      "int": 96,
+      "war": 32,
+      "cha": 88,
+      "compat": 7,
+      "bornYear": 163,
+      "diedYear": 212
+    },
+    {
+      "id": "xun_you",
+      "name": "순유",
+      "int": 92,
+      "war": 35,
+      "cha": 80,
+      "compat": 7,
+      "bornYear": 157,
+      "diedYear": 214
+    },
+    {
+      "id": "guo_jia",
+      "name": "곽가",
+      "int": 97,
+      "war": 25,
+      "cha": 82,
+      "compat": 7,
+      "bornYear": 170,
+      "diedYear": 207
+    },
+    {
+      "id": "cheng_yu",
+      "name": "정욱",
+      "int": 88,
+      "war": 58,
+      "cha": 72,
+      "compat": 7,
+      "bornYear": 141,
+      "diedYear": 220
+    },
+    {
+      "id": "jia_xu",
+      "name": "가후",
+      "int": 95,
+      "war": 40,
+      "cha": 70,
+      "compat": 2,
+      "bornYear": 147,
+      "diedYear": 223
+    },
+    {
+      "id": "dian_wei",
+      "name": "전위",
+      "int": 28,
+      "war": 95,
+      "cha": 58,
+      "compat": 8,
+      "bornYear": 160,
+      "diedYear": 197
+    },
+    {
+      "id": "xu_chu",
+      "name": "허저",
+      "int": 32,
+      "war": 96,
+      "cha": 62,
+      "compat": 8,
+      "bornYear": 170,
+      "diedYear": 230
+    },
+    {
+      "id": "zhang_liao",
+      "name": "장료",
+      "int": 78,
+      "war": 93,
+      "cha": 83,
+      "compat": 6,
+      "bornYear": 169,
+      "diedYear": 222
+    },
+    {
+      "id": "xu_huang",
+      "name": "서황",
+      "int": 72,
+      "war": 89,
+      "cha": 70,
+      "compat": 8,
+      "bornYear": 169,
+      "diedYear": 227
+    },
+    {
+      "id": "zhang_he",
+      "name": "장합",
+      "int": 73,
+      "war": 88,
+      "cha": 68,
+      "compat": 7,
+      "bornYear": 167,
+      "diedYear": 231
+    },
+    {
+      "id": "pang_de",
+      "name": "방덕",
+      "int": 60,
+      "war": 90,
+      "cha": 72,
+      "compat": 9,
+      "bornYear": 170,
+      "diedYear": 219
+    },
+    {
+      "id": "yu_jin",
+      "name": "우금",
+      "int": 66,
+      "war": 82,
+      "cha": 64,
+      "compat": 8,
+      "bornYear": 160,
+      "diedYear": 221
+    },
+    {
+      "id": "li_dian",
+      "name": "이전",
+      "int": 70,
+      "war": 79,
+      "cha": 74,
+      "compat": 8,
+      "bornYear": 174,
+      "diedYear": 215
+    },
+    {
+      "id": "yue_jin",
+      "name": "악진",
+      "int": 55,
+      "war": 84,
+      "cha": 66,
+      "compat": 8,
+      "bornYear": 165,
+      "diedYear": 218
+    },
+    {
+      "id": "sima_yi",
+      "name": "사마의",
+      "int": 96,
+      "war": 63,
+      "cha": 85,
+      "compat": 6,
+      "bornYear": 179,
+      "diedYear": 251
+    },
+    {
+      "id": "deng_ai",
+      "name": "등애",
+      "int": 88,
+      "war": 82,
+      "cha": 70,
+      "compat": 7,
+      "bornYear": 197,
+      "diedYear": 264
+    },
+
+    {
+      "id": "liu_bei",
+      "name": "유비",
+      "int": 74,
+      "war": 68,
+      "cha": 99,
+      "compat": 4,
+      "bornYear": 161,
+      "diedYear": 223
+    },
+    {
+      "id": "guan_yu",
+      "name": "관우",
+      "int": 76,
+      "war": 97,
+      "cha": 88,
+      "compat": 4,
+      "bornYear": 160,
+      "diedYear": 220
+    },
+    {
+      "id": "guan_ping",
+      "name": "관평",
+      "int": 60,
+      "war": 82,
+      "cha": 70,
+      "compat": 4,
+      "bornYear": 178,
+      "diedYear": 220
+    },
+    {
+      "id": "zhang_fei",
+      "name": "장비",
+      "int": 45,
+      "war": 98,
+      "cha": 55,
+      "compat": 4,
+      "bornYear": 165,
+      "diedYear": 221
+    },
+    {
+      "id": "zhao_yun",
+      "name": "조운",
+      "int": 76,
+      "war": 96,
+      "cha": 84,
+      "compat": 5,
+      "bornYear": 168,
+      "diedYear": 229
+    },
+    {
+      "id": "zhuge_liang",
+      "name": "제갈량",
+      "int": 100,
+      "war": 40,
+      "cha": 93,
+      "compat": 4,
+      "bornYear": 181,
+      "diedYear": 234
+    },
+    {
+      "id": "pang_tong",
+      "name": "방통",
+      "int": 95,
+      "war": 38,
+      "cha": 80,
+      "compat": 5,
+      "bornYear": 179,
+      "diedYear": 214
+    },
+    {
+      "id": "huang_zhong",
+      "name": "황충",
+      "int": 62,
+      "war": 93,
+      "cha": 72,
+      "compat": 5,
+      "bornYear": 148,
+      "diedYear": 220
+    },
+    {
+      "id": "ma_chao",
+      "name": "마초",
+      "int": 44,
+      "war": 95,
+      "cha": 82,
+      "compat": 10,
+      "bornYear": 176,
+      "diedYear": 222
+    },
+    {
+      "id": "wei_yan",
+      "name": "위연",
+      "int": 68,
+      "war": 87,
+      "cha": 58,
+      "compat": 6,
+      "bornYear": 175,
+      "diedYear": 234
+    },
+    {
+      "id": "jiang_wei",
+      "name": "강유",
+      "int": 90,
+      "war": 85,
+      "cha": 80,
+      "compat": 5,
+      "bornYear": 202,
+      "diedYear": 264
+    },
+    {
+      "id": "fa_zheng",
+      "name": "법정",
+      "int": 92,
+      "war": 45,
+      "cha": 72,
+      "compat": 6,
+      "bornYear": 176,
+      "diedYear": 220
+    },
+    {
+      "id": "ma_liang",
+      "name": "마량",
+      "int": 86,
+      "war": 40,
+      "cha": 80,
+      "compat": 4,
+      "bornYear": 187,
+      "diedYear": 222
+    },
+    {
+      "id": "wang_ping",
+      "name": "왕평",
+      "int": 72,
+      "war": 80,
+      "cha": 70,
+      "compat": 5,
+      "bornYear": 180,
+      "diedYear": 248
+    },
+
+    {
+      "id": "sun_jian",
+      "name": "손견",
+      "int": 72,
+      "war": 86,
+      "cha": 85,
+      "compat": 12,
+      "bornYear": 155,
+      "diedYear": 191
+    },
+    {
+      "id": "sun_ce",
+      "name": "손책",
+      "int": 70,
+      "war": 90,
+      "cha": 88,
+      "compat": 12,
+      "bornYear": 175,
+      "diedYear": 200
+    },
+    {
+      "id": "sun_quan",
+      "name": "손권",
+      "int": 80,
+      "war": 66,
+      "cha": 92,
+      "compat": 12,
+      "bornYear": 182,
+      "diedYear": 252
+    },
+    {
+      "id": "zhou_yu",
+      "name": "주유",
+      "int": 95,
+      "war": 71,
+      "cha": 90,
+      "compat": 12,
+      "bornYear": 175,
+      "diedYear": 210
+    },
+    {
+      "id": "lu_su",
+      "name": "노숙",
+      "int": 90,
+      "war": 48,
+      "cha": 82,
+      "compat": 12,
+      "bornYear": 172,
+      "diedYear": 217
+    },
+    {
+      "id": "lu_meng",
+      "name": "여몽",
+      "int": 86,
+      "war": 81,
+      "cha": 78,
+      "compat": 12,
+      "bornYear": 178,
+      "diedYear": 220
+    },
+    {
+      "id": "lu_xun",
+      "name": "육손",
+      "int": 94,
+      "war": 70,
+      "cha": 84,
+      "compat": 12,
+      "bornYear": 183,
+      "diedYear": 245
+    },
+    {
+      "id": "taishi_ci",
+      "name": "태사자",
+      "int": 60,
+      "war": 90,
+      "cha": 78,
+      "compat": 12,
+      "bornYear": 166,
+      "diedYear": 206
+    },
+    {
+      "id": "gan_ning",
+      "name": "감녕",
+      "int": 58,
+      "war": 91,
+      "cha": 66,
+      "compat": 13,
+      "bornYear": 175,
+      "diedYear": 220
+    },
+    {
+      "id": "huang_gai",
+      "name": "황개",
+      "int": 65,
+      "war": 82,
+      "cha": 74,
+      "compat": 12,
+      "bornYear": 150,
+      "diedYear": 215
+    },
+    {
+      "id": "cheng_pu",
+      "name": "정보",
+      "int": 70,
+      "war": 83,
+      "cha": 76,
+      "compat": 12,
+      "bornYear": 148,
+      "diedYear": 215
+    },
+    {
+      "id": "zhang_zhao",
+      "name": "장소",
+      "int": 88,
+      "war": 35,
+      "cha": 80,
+      "compat": 12,
+      "bornYear": 156,
+      "diedYear": 236
+    },
+    {
+      "id": "zhou_tai",
+      "name": "주태",
+      "int": 45,
+      "war": 88,
+      "cha": 64,
+      "compat": 13,
+      "bornYear": 170,
+      "diedYear": 225
+    },
+    {
+      "id": "xu_sheng",
+      "name": "서성",
+      "int": 68,
+      "war": 82,
+      "cha": 70,
+      "compat": 12,
+      "bornYear": 180,
+      "diedYear": 228
+    },
+    {
+      "id": "ding_feng",
+      "name": "정봉",
+      "int": 66,
+      "war": 84,
+      "cha": 68,
+      "compat": 12,
+      "bornYear": 185,
+      "diedYear": 271
+    },
+
+    {
+      "id": "dong_zhuo",
+      "name": "동탁",
+      "int": 60,
+      "war": 78,
+      "cha": 28,
+      "compat": 1,
+      "bornYear": 139,
+      "diedYear": 192
+    },
+    {
+      "id": "lu_bu",
+      "name": "여포",
+      "int": 30,
+      "war": 100,
+      "cha": 48,
+      "compat": 0,
+      "bornYear": 161,
+      "diedYear": 199
+    },
+    {
+      "id": "gao_shun",
+      "name": "고순",
+      "int": 62,
+      "war": 84,
+      "cha": 66,
+      "compat": 1,
+      "bornYear": 165,
+      "diedYear": 198
+    },
+    {
+      "id": "hua_xiong",
+      "name": "화웅",
+      "int": 35,
+      "war": 87,
+      "cha": 50,
+      "compat": 1,
+      "bornYear": 160,
+      "diedYear": 191
+    },
+    {
+      "id": "chen_gong",
+      "name": "진궁",
+      "int": 88,
+      "war": 52,
+      "cha": 70,
+      "compat": 3,
+      "bornYear": 160,
+      "diedYear": 198
+    },
+    {
+      "id": "yuan_shao",
+      "name": "원소",
+      "int": 68,
+      "war": 64,
+      "cha": 86,
+      "compat": 6,
+      "bornYear": 154,
+      "diedYear": 202
+    },
+    {
+      "id": "yuan_shu",
+      "name": "원술",
+      "int": 55,
+      "war": 58,
+      "cha": 62,
+      "compat": 6,
+      "bornYear": 155,
+      "diedYear": 199
+    },
+    {
+      "id": "yan_liang",
+      "name": "안량",
+      "int": 38,
+      "war": 92,
+      "cha": 58,
+      "compat": 6,
+      "bornYear": 165,
+      "diedYear": 200
+    },
+    {
+      "id": "wen_chou",
+      "name": "문추",
+      "int": 40,
+      "war": 91,
+      "cha": 56,
+      "compat": 6,
+      "bornYear": 165,
+      "diedYear": 200
+    },
+    {
+      "id": "tian_feng",
+      "name": "전풍",
+      "int": 90,
+      "war": 40,
+      "cha": 65,
+      "compat": 6,
+      "bornYear": 150,
+      "diedYear": 200
+    },
+    {
+      "id": "ju_shou",
+      "name": "저수",
+      "int": 89,
+      "war": 42,
+      "cha": 68,
+      "compat": 6,
+      "bornYear": 150,
+      "diedYear": 200
+    },
+    {
+      "id": "liu_biao",
+      "name": "유표",
+      "int": 72,
+      "war": 45,
+      "cha": 80,
+      "compat": 9,
+      "bornYear": 142,
+      "diedYear": 208
+    },
+    {
+      "id": "liu_zhang",
+      "name": "유장",
+      "int": 52,
+      "war": 40,
+      "cha": 58,
+      "compat": 9,
+      "bornYear": 165,
+      "diedYear": 219
+    },
+    {
+      "id": "ma_teng",
+      "name": "마등",
+      "int": 58,
+      "war": 84,
+      "cha": 78,
+      "compat": 10,
+      "bornYear": 156,
+      "diedYear": 212
+    },
+    {
+      "id": "gongsun_zan",
+      "name": "공손찬",
+      "int": 60,
+      "war": 82,
+      "cha": 72,
+      "compat": 7,
+      "bornYear": 155,
+      "diedYear": 199
+    },
+    {
+      "id": "tao_qian",
+      "name": "도겸",
+      "int": 58,
+      "war": 50,
+      "cha": 66,
+      "compat": 9,
+      "bornYear": 132,
+      "diedYear": 194
+    },
+    {
+      "id": "wang_yun",
+      "name": "왕윤",
+      "int": 80,
+      "war": 30,
+      "cha": 72,
+      "compat": 3,
+      "bornYear": 137,
+      "diedYear": 192
+    }
+  ]
+}
