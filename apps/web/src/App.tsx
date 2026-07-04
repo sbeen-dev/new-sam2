@@ -4,7 +4,7 @@ import { loadGameData } from '@sam2/engine/web';
 import { effWar, effInt, effCha } from '@sam2/engine';
 import { useGame } from './useGame';
 import { MapView } from './MapView';
-import { Avatar } from './Avatar';
+import { Portrait, officerEpithet } from './Portrait';
 import { factionColor } from './faction';
 
 type Data = ReturnType<typeof loadGameData>;
@@ -232,7 +232,15 @@ function GameScreen({
                           onClick={() => setExpandedOfficer(open ? null : o.officerId)}
                           disabled={!isMyCity || captive || (isActed && cmds.length === 0)}
                         >
-                          <Avatar name={base.name} lordId={o.lordId} size={30} dim={isActed} />
+                          <span style={{ opacity: isActed ? 0.5 : 1, display: 'flex' }}>
+                            <Portrait
+                              officer={base}
+                              lordId={o.lordId}
+                              age={g.state.year - base.bornYear}
+                              status={o.status}
+                              size={34}
+                            />
+                          </span>
                           <span className="oname">
                             {base.name}
                             {o.status === 'lord' && <span className="tag lord">군주</span>}
@@ -245,6 +253,24 @@ function GameScreen({
                         </button>
                         {open && isMyCity && !captive && (
                           <div className="ocommands">
+                            <div className="odetail">
+                              <Portrait
+                                officer={base}
+                                lordId={o.lordId}
+                                age={g.state.year - base.bornYear}
+                                status={o.status}
+                                size={64}
+                              />
+                              <div className="odetail-info">
+                                <div className="epithet">{officerEpithet(base)}</div>
+                                <div className="odetail-stats">
+                                  지력 {st.int} · 무력 {st.war} · 매력 {st.cha}
+                                </div>
+                                <div className="odetail-sub">
+                                  충성 {o.loyalty} · {base.bornYear}년생
+                                </div>
+                              </div>
+                            </div>
                             {cmds.length === 0 && <div className="none">가능한 명령 없음</div>}
                             {cmds.map((c, i) => (
                               <button

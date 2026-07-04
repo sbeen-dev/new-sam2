@@ -329,8 +329,34 @@ body {
 .tag.ok {
   color: #5a9367;
 }
+.portrait {
+  flex-shrink: 0;
+  border-radius: 8px;
+}
 .ocommands {
   padding: 6px 0 2px 10px;
+}
+.odetail {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 2px 12px;
+}
+.odetail-info {
+  font-size: 0.85rem;
+}
+.epithet {
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.odetail-stats {
+  color: var(--text);
+}
+.odetail-sub {
+  color: var(--muted);
+  font-size: 0.78rem;
+  margin-top: 3px;
 }
 .none {
   font-size: 0.8rem;
