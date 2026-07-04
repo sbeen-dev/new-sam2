@@ -1,4 +1,5 @@
 import type { GameState, GameEvent } from '@sam2/shared';
+import { compatDistance } from '@sam2/shared';
 import type { DataIndex } from './data.js';
 import { CONFIG } from './config.js';
 import { nextFloat } from './rng.js';
@@ -83,8 +84,16 @@ export function resolve(
   for (const o of Object.values(s.officers)) {
     if (o.dead || o.status !== 'officer') continue;
     if (o.loyalty >= CONFIG.loyalty.defectThreshold) continue;
+    // 군주와 상성이 나쁠수록 이탈 확률↑
+    const lordBase = o.lordId ? idx.officer.get(o.lordId) : undefined;
+    const selfBase = idx.officer.get(o.officerId);
+    const compatPenalty =
+      lordBase && selfBase
+        ? compatDistance(lordBase.compat, selfBase.compat) * CONFIG.loyalty.compatDefectFactor
+        : 0;
     const chance =
-      (CONFIG.loyalty.defectThreshold - o.loyalty) * CONFIG.loyalty.defectChancePerPoint;
+      (CONFIG.loyalty.defectThreshold - o.loyalty) * CONFIG.loyalty.defectChancePerPoint +
+      compatPenalty;
     if (roll() < chance) {
       const lordName = o.lordId ? idx.officer.get(o.lordId)?.name : '';
       o.status = 'free';

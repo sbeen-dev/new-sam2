@@ -16,8 +16,16 @@ export interface Officer {
   war: number;
   /** 매력 1..100 */
   cha: number;
+  /** 상성(相性) 0..15. 값이 가까울수록 궁합이 좋아 등용·이탈 판정에 유리(원형 거리). */
+  compat: number;
   bornYear: number;
   diedYear: number;
+}
+
+/** 두 상성값의 원형 거리(0=동일, 최대 8). 작을수록 궁합이 좋다. */
+export function compatDistance(a: number, b: number): number {
+  const d = Math.abs(a - b) % 16;
+  return Math.min(d, 16 - d);
 }
 
 export type OfficerStatus = 'lord' | 'officer' | 'free' | 'captive';

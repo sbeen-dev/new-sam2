@@ -38,6 +38,8 @@ for (const o of officers) {
     if (typeof o[k] !== 'number' || o[k] < STAT_MIN || o[k] > STAT_MAX)
       err(`officer ${o.id} ${k} 범위 밖(${STAT_MIN}..${STAT_MAX}): ${o[k]}`);
   }
+  if (typeof o.compat !== 'number' || o.compat < 0 || o.compat > 15)
+    err(`officer ${o.id} compat 범위 밖(0..15): ${o.compat}`);
   if (o.bornYear > o.diedYear) err(`officer ${o.id} 생몰 역전: ${o.bornYear}>${o.diedYear}`);
 }
 

@@ -1,4 +1,5 @@
 import type { GameState, Command, GameEvent } from '@sam2/shared';
+import { compatDistance } from '@sam2/shared';
 import type { DataIndex } from '../data.js';
 import { CONFIG } from '../config.js';
 import {
@@ -321,7 +322,13 @@ function applyRecruit(state: GameState, idx: DataIndex, cmd: Command): ApplyResu
   city.gold -= CONFIG.recruit.goldCost;
   const r = nextRoll(s);
   s.rng = r.rng;
-  const chance = CONFIG.recruit.baseChance + actor.cha / CONFIG.recruit.chaDivisor;
+  const lordBase = city.lordId ? idx.officer.get(city.lordId) : undefined;
+  const targetBase = idx.officer.get(targetId);
+  const compatBonus =
+    lordBase && targetBase
+      ? (4 - compatDistance(lordBase.compat, targetBase.compat)) * CONFIG.recruit.compatFactor
+      : 0;
+  const chance = CONFIG.recruit.baseChance + actor.cha / CONFIG.recruit.chaDivisor + compatBonus;
   const targetName = idx.officer.get(targetId)?.name;
   if (r.value < chance) {
     target.status = 'officer';
@@ -507,8 +514,17 @@ function applyBribe(state: GameState, idx: DataIndex, cmd: Command): ApplyResult
   const r = nextRoll(s);
   s.rng = r.rng;
   const tName = idx.officer.get(targetId)?.name;
+  const lordBase = city.lordId ? idx.officer.get(city.lordId) : undefined;
+  const targetBase = idx.officer.get(targetId);
+  const compatBonus =
+    lordBase && targetBase
+      ? (4 - compatDistance(lordBase.compat, targetBase.compat)) * cfg.compatFactor
+      : 0;
   const chance =
-    cfg.baseChance + actor.int / cfg.intDivisor - (target.loyalty / 100) * cfg.loyaltyResist;
+    cfg.baseChance +
+    actor.int / cfg.intDivisor -
+    (target.loyalty / 100) * cfg.loyaltyResist +
+    compatBonus;
   if (r.value < chance) {
     target.lordId = city.lordId;
     target.status = 'officer';

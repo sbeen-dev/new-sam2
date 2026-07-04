@@ -8,6 +8,7 @@ import { runTurn } from './game.js';
 import { citiesOf, freeOfficersInCity } from './state.js';
 import { createRng, nextFloat } from './rng.js';
 import { resolveBattle } from './combat/battle.js';
+import { compatDistance } from '@sam2/shared';
 
 const data = loadGameData();
 const idx = indexData(data);
@@ -125,6 +126,45 @@ describe('확장 명령', () => {
     expect([outcome.duel!.attackerOfficerId, outcome.duel!.defenderOfficerId]).toContain('lu_bu');
   });
 });
+
+describe('상성(相性)', () => {
+  it('원형 거리: 동일=0, 반대=8', () => {
+    expect(compatDistance(12, 12)).toBe(0);
+    expect(compatDistance(0, 8)).toBe(8);
+    expect(compatDistance(15, 0)).toBe(1); // 원형(순환)
+  });
+  it('상성이 가까운 재야가 등용 성공률이 더 높다(통계)', () => {
+    // 유비(compat 4) 세력이 촉계(가까움) vs 오계(멈) 재야를 등용 시도
+    let near = 0;
+    let far = 0;
+    for (let seed = 1; seed <= 60; seed++) {
+      const near1 = trySingleRecruit(seed, 'liu_bei', 'zhuge_liang'); // compat 4
+      const far1 = trySingleRecruit(seed, 'liu_bei', 'gan_ning'); // compat 13
+      if (near1) near++;
+      if (far1) far++;
+    }
+    expect(near).toBeGreaterThan(far);
+  });
+});
+
+/** 특정 군주가 특정 재야를 같은 도시에서 1회 등용 시도했을 때 성공 여부 */
+function trySingleRecruit(seed: number, lordId: string, freeId: string): boolean {
+  const s = loadScenario(data, 's1_189', seed);
+  // 재야를 군주 수도로 이동시켜 등용 대상화
+  const cityId = citiesOf(s, lordId)[0]!;
+  s.officers[freeId]!.cityId = cityId;
+  s.officers[freeId]!.status = 'free';
+  s.officers[freeId]!.lordId = null;
+  s.cities[cityId]!.gold = 500;
+  const actor = s.officers[lordId]!.officerId;
+  const r = applyCommand(s, idx, {
+    type: 'recruit',
+    actorOfficerId: actor,
+    cityId,
+    params: { targetOfficerId: freeId },
+  });
+  return r.state.officers[freeId]!.status === 'officer';
+}
 
 describe('계략·외교', () => {
   it('이간은 인접 적 장수의 충성을 낮춘다(성공 시)', () => {

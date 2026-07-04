@@ -25,15 +25,21 @@ export const CONFIG = {
   draft: { goldPer1000: 20, soldiersPerCha: 25, maxPopulationRatio: 0.1 },
   /** 이동 명령: 병력을 인접 아군 도시로. 최소 잔류 병력 */
   move: { keepMin: 500 },
-  /** 등용 명령: 재야 영입. 비용과 매력 기반 성공률 */
-  recruit: { goldCost: 100, baseChance: 0.2, chaDivisor: 120 },
+  /** 등용 명령: 재야 영입. 비용·매력·상성 기반 성공률 */
+  recruit: { goldCost: 100, baseChance: 0.2, chaDivisor: 120, compatFactor: 0.05 },
   /** 포상 명령: 충성도 상승 */
   reward: { goldCost: 80, loyaltyGain: 10, loyaltyCap: 100 },
   /** 계략: 지력 기반 비군사 공격 (인접 적 대상) */
   scheme: {
     rumor: { goldCost: 60, orderDropPerInt: 0.3, baseChance: 0.25, intDivisor: 150 },
     sow: { goldCost: 80, loyaltyDropPerInt: 0.3, baseChance: 0.2, intDivisor: 150 },
-    bribe: { goldCost: 200, baseChance: 0.15, intDivisor: 200, loyaltyResist: 0.4 },
+    bribe: {
+      goldCost: 200,
+      baseChance: 0.15,
+      intDivisor: 200,
+      loyaltyResist: 0.4,
+      compatFactor: 0.04,
+    },
   },
   /** 외교 */
   diplomacy: {
@@ -69,6 +75,7 @@ export const CONFIG = {
     officerInit: 90,
     defectThreshold: 25, // 이 미만이면 모반 위험
     defectChancePerPoint: 0.01, // (임계-충성) 1점당 이탈 확률
+    compatDefectFactor: 0.004, // 군주와 상성 거리 1당 이탈 확률 가산
   },
   /** 참모 성장: 도시 최고 지력 장수가 다른 장수의 지력을 매달 +1 (참모 지력-1 상한) */
   advisorGrowth: { intPerMonth: 1 },
