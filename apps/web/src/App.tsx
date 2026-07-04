@@ -239,6 +239,12 @@ function commandLabel(
       return `🤝 동맹 → ${name(String(c.params.targetLordId))}`;
     case 'aid':
       return `📦 원조 → ${name(String(c.params.targetLordId))}`;
+    case 'recruitCaptive':
+      return `⛓️ 포로 등용 → ${name(String(c.params.targetOfficerId))}`;
+    case 'releaseCaptive':
+      return `🕊️ 포로 해방 → ${name(String(c.params.targetOfficerId))}`;
+    case 'executeCaptive':
+      return `🗡️ 포로 참수 → ${name(String(c.params.targetOfficerId))}`;
     case 'invade':
       return `🏴 침공 → ${city(String(c.params.targetCityId))?.name ?? c.params.targetCityId}`;
     default:

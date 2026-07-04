@@ -2,12 +2,14 @@ import type { GameState, RngState } from '@sam2/shared';
 import type { DataIndex } from '../data.js';
 import { CONFIG } from '../config.js';
 import { nextFloat } from '../rng.js';
-import { officersInCity } from '../state.js';
+import { officersInCity, effWar } from '../state.js';
 
 export interface DuelResult {
   attackerOfficerId: string;
   defenderOfficerId: string;
   attackerWon: boolean;
+  /** 약자(무력 낮은 쪽)가 이겼을 때 승자의 무력 성장치 */
+  warGain: number;
 }
 
 export interface BattleOutcome {
@@ -25,7 +27,7 @@ function topWarOfficer(
 ): { id: string; war: number } | null {
   let best: { id: string; war: number } | null = null;
   for (const oid of officersInCity(state, cityId)) {
-    const war = idx.officer.get(oid)?.war ?? 0;
+    const war = effWar(state, idx.officer.get(oid)?.war ?? 0, oid);
     if (!best || war > best.war) best = { id: oid, war };
   }
   return best;
@@ -64,10 +66,15 @@ export function resolveBattle(
     const atkScore = atkWar * (0.75 + 0.5 * roll());
     const defScore = defWar * (0.75 + 0.5 * roll());
     const attackerWon = atkScore >= defScore;
+    // 약자가 이기면 무력 차이만큼 성장(RTK2 규칙)
+    const winnerWar = attackerWon ? atkWar : defWar;
+    const loserWar = attackerWon ? defWar : atkWar;
+    const warGain = loserWar > winnerWar ? loserWar - winnerWar : 0;
     duel = {
       attackerOfficerId: atkOfficer.id,
       defenderOfficerId: defOfficer.id,
       attackerWon,
+      warGain,
     };
     if (attackerWon) atkDuelBonus += CONFIG.combat.duelWinnerBonus;
     else defDuelBonus += CONFIG.combat.duelWinnerBonus;

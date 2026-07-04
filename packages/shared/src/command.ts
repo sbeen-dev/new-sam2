@@ -22,6 +22,10 @@ export type CommandType =
   // 외교
   | 'ally'
   | 'aid'
+  // 포로 처리
+  | 'recruitCaptive'
+  | 'releaseCaptive'
+  | 'executeCaptive'
   // 전쟁
   | 'invade';
 

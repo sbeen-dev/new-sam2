@@ -41,7 +41,7 @@ export function runTurn(
     const w = checkVictory(s);
     if (w) return { state: s, events, winner: w };
   }
-  const resolved = resolve(s);
+  const resolved = resolve(s, idx);
   s = resolved.state;
   events.push(...resolved.events);
   return { state: s, events, winner: checkVictory(s) };

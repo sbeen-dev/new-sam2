@@ -24,7 +24,17 @@ export function loadScenario(data: GameData, scenarioId: string, seed: number): 
 
   // 배치되지 않은 장수는 재야(free)
   for (const o of data.officers) {
-    officers[o.id] = { officerId: o.id, lordId: null, cityId: null, loyalty: 0, status: 'free' };
+    officers[o.id] = {
+      officerId: o.id,
+      lordId: null,
+      cityId: null,
+      loyalty: 0,
+      status: 'free',
+      warGrowth: 0,
+      intGrowth: 0,
+      captorId: null,
+      dead: false,
+    };
   }
 
   for (const lord of scenario.lords) {
@@ -52,6 +62,10 @@ export function loadScenario(data: GameData, scenarioId: string, seed: number): 
         cityId: homeCity,
         loyalty: oid === lord.lordId ? CONFIG.loyalty.lordInit : CONFIG.loyalty.officerInit,
         status: oid === lord.lordId ? 'lord' : 'officer',
+        warGrowth: 0,
+        intGrowth: 0,
+        captorId: null,
+        dead: false,
       };
     }
   }

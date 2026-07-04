@@ -5,6 +5,7 @@ import {
   citiesOf,
   officersInCity,
   freeOfficersInCity,
+  captivesInCity,
   activeLords,
   getRelation,
   relationKey,
@@ -137,6 +138,16 @@ export function listLegalCommands(state: GameState, idx: DataIndex, lordId: stri
             params: { targetLordId: other },
           });
       }
+      // 포로 처리: 등용/해방/참수
+      for (const captiveId of captivesInCity(state, cityId, lordId)) {
+        for (const t of ['recruitCaptive', 'releaseCaptive', 'executeCaptive'] as const)
+          cmds.push({
+            type: t,
+            actorOfficerId: firstOfficer,
+            cityId,
+            params: { targetOfficerId: captiveId },
+          });
+      }
     }
   }
   return cmds;
@@ -201,6 +212,12 @@ export function applyCommand(state: GameState, idx: DataIndex, cmd: Command): Ap
       return applyAlly(state, idx, cmd);
     case 'aid':
       return applyAid(state, idx, cmd);
+    case 'recruitCaptive':
+      return applyCaptive(state, idx, cmd, 'recruit');
+    case 'releaseCaptive':
+      return applyCaptive(state, idx, cmd, 'release');
+    case 'executeCaptive':
+      return applyCaptive(state, idx, cmd, 'execute');
     case 'invade':
       return applyInvade(state, idx, cmd);
     default:
@@ -364,6 +381,40 @@ function nextRoll(s: GameState): { value: number; rng: GameState['rng'] } {
   return { value: r.value, rng: r.next };
 }
 
+/** 포로 처리: 등용(아군화)·해방(재야)·참수(제거). */
+function applyCaptive(
+  state: GameState,
+  idx: DataIndex,
+  cmd: Command,
+  action: 'recruit' | 'release' | 'execute',
+): ApplyResult {
+  const s = clone(state);
+  const city = s.cities[cmd.cityId]!;
+  const captive = s.officers[String(cmd.params.targetOfficerId)];
+  if (!captive || captive.status !== 'captive' || captive.captorId !== city.lordId)
+    return { state, events: [] };
+  const nm = idx.officer.get(captive.officerId)?.name;
+  if (action === 'recruit') {
+    captive.status = 'officer';
+    captive.lordId = city.lordId;
+    captive.captorId = null;
+    captive.loyalty = Math.round(CONFIG.loyalty.officerInit * 0.6); // 포로 출신은 낮은 충성
+    return { state: s, events: [evt(s, 'recruit', `포로 ${nm}을(를) 등용했다`)] };
+  }
+  if (action === 'release') {
+    captive.status = 'free';
+    captive.lordId = null;
+    captive.captorId = null;
+    return { state: s, events: [evt(s, 'release', `포로 ${nm}을(를) 해방했다`)] };
+  }
+  captive.dead = true;
+  captive.status = 'free';
+  captive.lordId = null;
+  captive.captorId = null;
+  captive.cityId = null;
+  return { state: s, events: [evt(s, 'execute', `포로 ${nm}을(를) 참수했다`)] };
+}
+
 /** 유언비어: 인접 적 도시의 민심을 지력으로 교란. */
 function applyRumor(state: GameState, idx: DataIndex, cmd: Command): ApplyResult {
   const s = clone(state);
@@ -499,12 +550,24 @@ function applyInvade(state: GameState, idx: DataIndex, cmd: Command): ApplyResul
   const targetName = idx.city.get(targetId)?.name;
   const events: GameEvent[] = [];
 
-  // 일기토 결과 기록
+  // 일기토 결과 기록 + 무력 성장(약자 승리 시)
   if (outcome.duel) {
     const a = idx.officer.get(outcome.duel.attackerOfficerId)?.name;
     const d = idx.officer.get(outcome.duel.defenderOfficerId)?.name;
-    const winner = outcome.duel.attackerWon ? a : d;
-    events.push(evt(s, 'duel', `일기토: ${a} vs ${d} — ${winner} 승리`));
+    const winnerId = outcome.duel.attackerWon
+      ? outcome.duel.attackerOfficerId
+      : outcome.duel.defenderOfficerId;
+    events.push(evt(s, 'duel', `일기토: ${a} vs ${d} — ${idx.officer.get(winnerId)?.name} 승리`));
+    if (outcome.duel.warGain > 0 && s.officers[winnerId]) {
+      s.officers[winnerId]!.warGrowth += outcome.duel.warGain;
+      events.push(
+        evt(
+          s,
+          'growth',
+          `${idx.officer.get(winnerId)?.name} 무력 +${outcome.duel.warGain} (일기토 성장)`,
+        ),
+      );
+    }
   }
 
   if (outcome.attackerWins) {
@@ -514,17 +577,33 @@ function applyInvade(state: GameState, idx: DataIndex, cmd: Command): ApplyResul
     from.soldiers -= moved;
     target.soldiers = moved;
     const prevOwner = target.lordId;
+    // 수비 장수(비군주)를 포로로 사로잡는다
+    for (const o of Object.values(s.officers)) {
+      if (o.cityId === targetId && o.lordId === prevOwner && o.status === 'officer') {
+        o.status = 'captive';
+        o.captorId = from.lordId;
+        o.lordId = null;
+        events.push(evt(s, 'capture', `${idx.officer.get(o.officerId)?.name}을(를) 사로잡았다`));
+      }
+    }
     target.lordId = from.lordId;
     // 점령지로 지휘 장수 이동
-    s.officers[actor.id] = { ...s.officers[actor.id]!, cityId: targetId };
+    s.officers[actor.id]!.cityId = targetId;
     events.push(
       evt(s, 'conquer', `${actor.name}이(가) ${fromName}→${targetName} 침공 성공, 점령`, {
         prevOwner,
       }),
     );
-    // 정복당한 군주가 도시를 모두 잃으면 사망 처리
+    // 정복당한 군주가 도시를 모두 잃으면 멸망(군주도 포로)
     if (prevOwner && !Object.values(s.cities).some((c) => c.lordId === prevOwner)) {
       s.lords[prevOwner] = { ...s.lords[prevOwner]!, alive: false };
+      const lordState = s.officers[prevOwner];
+      if (lordState) {
+        lordState.status = 'captive';
+        lordState.captorId = from.lordId;
+        lordState.lordId = null;
+        lordState.cityId = targetId;
+      }
       events.push(evt(s, 'lordFall', `${idx.officer.get(prevOwner)?.name} 세력이 멸망했다`));
     }
   } else {

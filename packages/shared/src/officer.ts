@@ -29,4 +29,12 @@ export interface OfficerState {
   cityId: string | null;
   loyalty: number;
   status: OfficerStatus;
+  /** 무력 성장치(일기토 승리로 누적). 실효 무력 = 정적 war + warGrowth */
+  warGrowth: number;
+  /** 지력 성장치(참모 성장으로 누적). 실효 지력 = 정적 int + intGrowth */
+  intGrowth: number;
+  /** 포로일 때, 사로잡은 군주 id */
+  captorId: string | null;
+  /** 사망(수명/참수) 여부. true면 게임에서 제외. */
+  dead: boolean;
 }

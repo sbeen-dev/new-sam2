@@ -54,5 +54,12 @@ export const CONFIG = {
     minInvadeSoldiers: 2000, // 침공 최소 병력
     duelWinnerBonus: 0.12, // 일기토 승리 진영 전투력 가산
   },
-  loyalty: { lordInit: 100, officerInit: 90 },
+  loyalty: {
+    lordInit: 100,
+    officerInit: 90,
+    defectThreshold: 25, // 이 미만이면 모반 위험
+    defectChancePerPoint: 0.01, // (임계-충성) 1점당 이탈 확률
+  },
+  /** 참모 성장: 도시 최고 지력 장수가 다른 장수의 지력을 매달 +1 (참모 지력-1 상한) */
+  advisorGrowth: { intPerMonth: 1 },
 } as const;

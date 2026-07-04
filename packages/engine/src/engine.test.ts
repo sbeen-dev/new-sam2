@@ -171,11 +171,60 @@ describe('계략·외교', () => {
   });
 });
 
+describe('포로·성장·모반', () => {
+  it('도시 함락 시 수비 장수는 포로가 되고, 세력 전멸 시 군주도 포로', () => {
+    // 동탁(낙양)이 조조의 유일 도시 진류를 점령하는 seed 탐색
+    for (let seed = 1; seed < 80; seed++) {
+      const s = newGame(seed);
+      const cmd = listLegalCommands(s, idx, 'dong_zhuo').find(
+        (c) => c.type === 'invade' && c.cityId === 'luoyang' && c.params.targetCityId === 'chenliu',
+      );
+      if (!cmd) continue;
+      const r = applyCommand(s, idx, cmd);
+      if (r.events.some((e) => e.kind === 'conquer')) {
+        // 조조는 유일 도시를 잃어 포로, 부하 하후돈도 포로
+        expect(r.state.officers.cao_cao!.status).toBe('captive');
+        expect(r.state.officers.xiahou_dun!.status).toBe('captive');
+        expect(r.state.officers.xiahou_dun!.captorId).toBe('dong_zhuo');
+        // 포로 등용
+        const rc = applyCommand(r.state, idx, {
+          type: 'recruitCaptive',
+          actorOfficerId: 'dong_zhuo',
+          cityId: 'chenliu',
+          params: { targetOfficerId: 'xiahou_dun' },
+        });
+        expect(rc.state.officers.xiahou_dun!.status).toBe('officer');
+        expect(rc.state.officers.xiahou_dun!.lordId).toBe('dong_zhuo');
+        return;
+      }
+    }
+    throw new Error('진류 점령 케이스를 찾지 못함');
+  });
+
+  it('참모 성장: 도시 최고지력 장수가 다른 장수 지력을 올린다', () => {
+    const s = newGame();
+    // 낙양: 가후(지95)가 참모, 여포(지30)는 성장 대상
+    expect(s.officers.lu_bu!.intGrowth).toBe(0);
+    const r = resolve(s, idx);
+    expect(r.state.officers.lu_bu!.intGrowth).toBe(1);
+  });
+
+  it('모반: 충성이 매우 낮은 장수는 결국 이탈(재야化)', () => {
+    let s = newGame(9);
+    s = structuredClone(s);
+    s.officers.lu_bu!.loyalty = 1;
+    for (let i = 0; i < 200 && s.officers.lu_bu!.status === 'officer'; i++) {
+      s = resolve(s, idx).state;
+    }
+    expect(s.officers.lu_bu!.status).toBe('free');
+  });
+});
+
 describe('정산', () => {
   it('세수로 금이 늘고 달이 진행된다', () => {
     const s = newGame();
     const gold = s.cities.ye!.gold;
-    const r = resolve(s);
+    const r = resolve(s, idx);
     expect(r.state.cities.ye!.gold).toBeGreaterThan(gold);
     expect(r.state.turn).toBe(1);
     expect(r.state.month).toBe(2);

@@ -11,10 +11,13 @@ export {
   citiesOf,
   officersInCity,
   freeOfficersInCity,
+  captivesInCity,
   activeLords,
   checkVictory,
   getRelation,
   relationKey,
+  effWar,
+  effInt,
 } from './state.js';
 export { listLegalCommands, applyCommand } from './commands/index.js';
 export type { ApplyResult } from './commands/index.js';
