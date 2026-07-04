@@ -1,0 +1,19 @@
+{
+  "_meta": {
+    "note": "PROVISIONAL 시드. 실제 역사 인물이나 능력치(int/war/cha)는 밸런싱 전 placeholder이며 원작 KOEI 수치가 아님. 근거·산정 룰은 docs/data/data-catalog.md 참조. 확장·확정은 후속 작업.",
+    "statScale": "1..100",
+    "source": "역사 인물(공유 자산) + 자체 placeholder 산정"
+  },
+  "officers": [
+    { "id": "cao_cao", "name": "조조", "int": 91, "war": 72, "cha": 94, "bornYear": 155, "diedYear": 220 },
+    { "id": "liu_bei", "name": "유비", "int": 74, "war": 68, "cha": 99, "bornYear": 161, "diedYear": 223 },
+    { "id": "sun_ce", "name": "손책", "int": 70, "war": 90, "cha": 88, "bornYear": 175, "diedYear": 200 },
+    { "id": "guan_yu", "name": "관우", "int": 76, "war": 97, "cha": 85, "bornYear": 160, "diedYear": 220 },
+    { "id": "zhang_fei", "name": "장비", "int": 45, "war": 98, "cha": 55, "bornYear": 165, "diedYear": 221 },
+    { "id": "zhuge_liang", "name": "제갈량", "int": 100, "war": 40, "cha": 92, "bornYear": 181, "diedYear": 234 },
+    { "id": "zhou_yu", "name": "주유", "int": 95, "war": 71, "cha": 90, "bornYear": 175, "diedYear": 210 },
+    { "id": "lu_bu", "name": "여포", "int": 30, "war": 100, "cha": 48, "bornYear": 161, "diedYear": 199 },
+    { "id": "yuan_shao", "name": "원소", "int": 68, "war": 64, "cha": 82, "bornYear": 154, "diedYear": 202 },
+    { "id": "dong_zhuo", "name": "동탁", "int": 60, "war": 78, "cha": 30, "bornYear": 139, "diedYear": 192 }
+  ]
+}

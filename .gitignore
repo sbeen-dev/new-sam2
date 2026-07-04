@@ -1,0 +1,36 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+dist/
+build/
+*.tsbuildinfo
+
+# env & secrets (ai-env security.md: SEC-01, .env 커밋 금지)
+.env
+.env.*
+!.env.example
+*.pem
+credentials*
+*.key
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# editor / OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# test / coverage
+coverage/
+.vitest/
+
+# misc
+.cache/
+tmp/

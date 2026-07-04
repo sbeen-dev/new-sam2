@@ -1,0 +1,21 @@
+{
+  "_meta": {
+    "note": "PROVISIONAL 시드. 실제 역사 지명이며 인접/좌표는 개략적 배치. 원작 41개 주 전체 목록·인접·좌표 확정은 후속 작업(docs/game-design/cities.md, data-catalog.md). 인접(adjacent)은 대칭이어야 함(validate로 검증).",
+    "coordScale": "0..1 정규화",
+    "totalTargetCities": 41
+  },
+  "cities": [
+    { "id": "luoyang",  "name": "낙양",   "adjacent": ["chang_an", "xuchang", "ye"],        "x": 0.50, "y": 0.42 },
+    { "id": "chang_an", "name": "장안",   "adjacent": ["luoyang", "tianshui"],              "x": 0.38, "y": 0.40 },
+    { "id": "xuchang",  "name": "허창",   "adjacent": ["luoyang", "xiapi", "wan"],          "x": 0.58, "y": 0.48 },
+    { "id": "ye",       "name": "업",     "adjacent": ["luoyang", "beiping"],               "x": 0.55, "y": 0.30 },
+    { "id": "beiping",  "name": "북평",   "adjacent": ["ye"],                                "x": 0.62, "y": 0.18 },
+    { "id": "xiapi",    "name": "하비",   "adjacent": ["xuchang", "jianye"],                "x": 0.68, "y": 0.52 },
+    { "id": "wan",      "name": "완",     "adjacent": ["xuchang", "jiangling"],             "x": 0.52, "y": 0.58 },
+    { "id": "jiangling","name": "강릉",   "adjacent": ["wan", "jianye", "chengdu"],         "x": 0.50, "y": 0.68 },
+    { "id": "jianye",   "name": "건업",   "adjacent": ["xiapi", "jiangling", "kuaiji"],     "x": 0.72, "y": 0.64 },
+    { "id": "kuaiji",   "name": "회계",   "adjacent": ["jianye"],                            "x": 0.80, "y": 0.72 },
+    { "id": "chengdu",  "name": "성도",   "adjacent": ["jiangling", "tianshui"],            "x": 0.30, "y": 0.66 },
+    { "id": "tianshui", "name": "천수",   "adjacent": ["chang_an", "chengdu"],              "x": 0.28, "y": 0.50 }
+  ]
+}

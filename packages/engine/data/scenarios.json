@@ -1,0 +1,52 @@
+{
+  "_meta": {
+    "note": "PROVISIONAL 시드. 시나리오1(189) 일부 세력만 배치한 검증용. 6개 시나리오 전체·정확한 세력 배치·초기 수치 확정은 후속 작업(docs/game-design/scenarios.md). 초기 수치는 밸런싱 전 placeholder.",
+    "referencesMustExist": "lordId/officerId는 officers.json, cityId는 cities.json에 존재해야 함(validate로 검증)"
+  },
+  "scenarios": [
+    {
+      "id": "s1_189",
+      "year": 189,
+      "title": "반동탁 연합",
+      "playableLords": ["cao_cao", "yuan_shao", "dong_zhuo", "sun_ce", "liu_bei"],
+      "lords": [
+        {
+          "lordId": "dong_zhuo",
+          "officers": ["dong_zhuo", "lu_bu"],
+          "cities": [
+            { "cityId": "luoyang", "gold": 800, "rice": 1200, "soldiers": 15000, "land": 600, "flood": 500, "population": 400000, "publicOrder": 45 },
+            { "cityId": "chang_an", "gold": 500, "rice": 900, "soldiers": 9000, "land": 500, "flood": 450, "population": 300000, "publicOrder": 50 }
+          ]
+        },
+        {
+          "lordId": "cao_cao",
+          "officers": ["cao_cao"],
+          "cities": [
+            { "cityId": "xuchang", "gold": 600, "rice": 800, "soldiers": 8000, "land": 550, "flood": 500, "population": 280000, "publicOrder": 60 }
+          ]
+        },
+        {
+          "lordId": "yuan_shao",
+          "officers": ["yuan_shao"],
+          "cities": [
+            { "cityId": "ye", "gold": 700, "rice": 1000, "soldiers": 12000, "land": 600, "flood": 520, "population": 350000, "publicOrder": 58 }
+          ]
+        },
+        {
+          "lordId": "sun_ce",
+          "officers": ["sun_ce", "zhou_yu"],
+          "cities": [
+            { "cityId": "jianye", "gold": 500, "rice": 900, "soldiers": 7000, "land": 520, "flood": 480, "population": 260000, "publicOrder": 62 }
+          ]
+        },
+        {
+          "lordId": "liu_bei",
+          "officers": ["liu_bei", "guan_yu", "zhang_fei"],
+          "cities": [
+            { "cityId": "xiapi", "gold": 300, "rice": 500, "soldiers": 4000, "land": 450, "flood": 430, "population": 180000, "publicOrder": 65 }
+          ]
+        }
+      ]
+    }
+  ]
+}
