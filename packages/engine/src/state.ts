@@ -14,6 +14,13 @@ export function officersInCity(state: GameState, cityId: string): string[] {
     .map((o) => o.officerId);
 }
 
+/** 한 도시에 있는 재야(무소속) 장수 id 목록 (등용 대상) */
+export function freeOfficersInCity(state: GameState, cityId: string): string[] {
+  return Object.values(state.officers)
+    .filter((o) => o.cityId === cityId && o.status === 'free')
+    .map((o) => o.officerId);
+}
+
 /** 아직 생존해 도시를 하나라도 가진 군주 id 목록 */
 export function activeLords(state: GameState): string[] {
   return Object.keys(state.lords).filter(

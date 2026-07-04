@@ -56,6 +56,14 @@ export function loadScenario(data: GameData, scenarioId: string, seed: number): 
     }
   }
 
+  // 재야(미배치) 장수를 도시에 결정론적으로 분산 배치(등용 대상). 원작의 탐색/재야 분포를 근사.
+  const cityIds = [...data.cities].map((c) => c.id).sort();
+  const freeOfficers = data.officers.filter((o) => officers[o.id]!.status === 'free');
+  freeOfficers.sort((a, b) => a.id.localeCompare(b.id));
+  freeOfficers.forEach((o, i) => {
+    officers[o.id]!.cityId = cityIds[i % cityIds.length]!;
+  });
+
   return {
     scenarioId,
     turn: 0,

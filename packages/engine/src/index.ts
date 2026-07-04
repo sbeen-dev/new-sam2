@@ -7,11 +7,17 @@ export { indexData } from './data.js';
 export { CONFIG } from './config.js';
 export { createRng, nextFloat, nextInt } from './rng.js';
 export { loadScenario } from './scenario.js';
-export { citiesOf, officersInCity, activeLords, checkVictory } from './state.js';
+export {
+  citiesOf,
+  officersInCity,
+  freeOfficersInCity,
+  activeLords,
+  checkVictory,
+} from './state.js';
 export { listLegalCommands, applyCommand } from './commands/index.js';
 export type { ApplyResult } from './commands/index.js';
 export { resolveBattle } from './combat/battle.js';
-export type { BattleOutcome } from './combat/battle.js';
+export type { BattleOutcome, DuelResult } from './combat/battle.js';
 export { resolve } from './resolve.js';
 export { heuristicDecide } from './ai/heuristic.js';
 export { applyCommands, runTurn } from './game.js';

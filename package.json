@@ -16,7 +16,7 @@
     "format:check": "prettier --check .",
     "test": "pnpm -r test",
     "dev": "pnpm --filter @sam2/web dev",
-    "data:build": "node scripts/data/build-cities.mjs",
+    "data:build": "node scripts/data/build-cities.mjs && node scripts/data/build-scenarios.mjs",
     "data:validate": "node scripts/data/validate.mjs",
     "data:render": "node scripts/data/render-map.mjs",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm data:validate && pnpm test"

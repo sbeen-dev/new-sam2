@@ -5,8 +5,9 @@ import { loadScenario } from './scenario.js';
 import { listLegalCommands, applyCommand } from './commands/index.js';
 import { resolve } from './resolve.js';
 import { runTurn } from './game.js';
-import { citiesOf } from './state.js';
+import { citiesOf, freeOfficersInCity } from './state.js';
 import { createRng, nextFloat } from './rng.js';
+import { resolveBattle } from './combat/battle.js';
 
 const data = loadGameData();
 const idx = indexData(data);
@@ -60,6 +61,68 @@ describe('명령', () => {
     const cmd = listLegalCommands(s, idx, 'dong_zhuo').find((c) => c.type === 'develop')!;
     applyCommand(s, idx, cmd);
     expect(s.cities.luoyang!.gold).toBe(goldBefore);
+  });
+});
+
+describe('확장 명령', () => {
+  it('치수는 flood를 올리고 금을 소비', () => {
+    const s = newGame();
+    const before = s.cities.luoyang!;
+    const cmd = listLegalCommands(s, idx, 'dong_zhuo').find(
+      (c) => c.type === 'floodControl' && c.cityId === 'luoyang',
+    )!;
+    const r = applyCommand(s, idx, cmd);
+    expect(r.state.cities.luoyang!.flood).toBeGreaterThan(before.flood);
+    expect(r.state.cities.luoyang!.gold).toBeLessThan(before.gold);
+  });
+
+  it('이동은 인접 아군 도시로 병력을 옮긴다(총량 보존)', () => {
+    const s = newGame();
+    // 동탁은 낙양·장안 두 도시 보유(인접)
+    const cmd = listLegalCommands(s, idx, 'dong_zhuo').find(
+      (c) => c.type === 'move' && c.cityId === 'luoyang' && c.params.targetCityId === 'chang_an',
+    );
+    expect(cmd).toBeTruthy();
+    const before = s.cities.luoyang!.soldiers + s.cities.chang_an!.soldiers;
+    const r = applyCommand(s, idx, cmd!);
+    const after = r.state.cities.luoyang!.soldiers + r.state.cities.chang_an!.soldiers;
+    expect(after).toBe(before);
+    expect(r.state.cities.chang_an!.soldiers).toBeGreaterThan(s.cities.chang_an!.soldiers);
+  });
+
+  it('등용은 재야를 대상으로 하고 금을 소비(성공/실패 무관)', () => {
+    const s = newGame();
+    // 동탁 소유 도시에 있는 재야 장수 찾기
+    const cmd = listLegalCommands(s, idx, 'dong_zhuo').find((c) => c.type === 'recruit');
+    expect(cmd).toBeTruthy();
+    const city = s.cities[cmd!.cityId]!;
+    const targetId = String(cmd!.params.targetOfficerId);
+    expect(s.officers[targetId]!.status).toBe('free');
+    const r = applyCommand(s, idx, cmd!);
+    expect(r.state.cities[cmd!.cityId]!.gold).toBeLessThan(city.gold);
+    // 성공 시 소속 전환, 실패 시 여전히 재야
+    const st = r.state.officers[targetId]!.status;
+    expect(st === 'officer' || st === 'free').toBe(true);
+  });
+
+  it('재야 장수는 도시에 배치되어 있다(등용 가능)', () => {
+    const s = newGame();
+    const total = Object.values(s.officers).filter((o) => o.status === 'free').length;
+    const placed = Object.values(s.cities).reduce(
+      (n, c) => n + freeOfficersInCity(s, c.cityId).length,
+      0,
+    );
+    expect(placed).toBe(total);
+    expect(total).toBeGreaterThan(0);
+  });
+
+  it('일기토는 양측 장수가 있을 때 발생', () => {
+    const s = newGame(5);
+    // 낙양(동탁: 여포 무력100 등) vs 인접 장안(동탁 소유) 대신 중립 침공은 수비 장수 없음
+    // 여포가 있는 낙양에서 조조령 진류 공격 시 양측 장수 존재
+    const { outcome } = resolveBattle(s, idx, 'luoyang', 'chenliu', 10000);
+    expect(outcome.duel).not.toBeNull();
+    expect([outcome.duel!.attackerOfficerId, outcome.duel!.defenderOfficerId]).toContain('lu_bu');
   });
 });
 

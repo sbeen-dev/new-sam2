@@ -5,37 +5,57 @@ import { useGame } from './useGame';
 import { MapView } from './MapView';
 import { factionColor } from './faction';
 
-const SCENARIO_ID = 's1_189';
+type Data = ReturnType<typeof loadGameData>;
 
 export function App() {
   const data = useMemo(() => loadGameData(), []);
-  const scenario = data.scenarios.find((s) => s.id === SCENARIO_ID)!;
-  const [choice, setChoice] = useState<{ lordId: string | null } | null>(null);
+  const [choice, setChoice] = useState<{ scenarioId: string; lordId: string | null } | null>(null);
 
   if (!choice) {
     return (
-      <StartScreen scenario={scenario} onStart={(lordId) => setChoice({ lordId })} data={data} />
+      <StartScreen
+        data={data}
+        onStart={(scenarioId, lordId) => setChoice({ scenarioId, lordId })}
+      />
     );
   }
-  return <GameScreen humanLordId={choice.lordId} />;
+  return (
+    <GameScreen
+      key={choice.scenarioId + choice.lordId}
+      scenarioId={choice.scenarioId}
+      humanLordId={choice.lordId}
+    />
+  );
 }
 
 function StartScreen({
-  scenario,
-  onStart,
   data,
+  onStart,
 }: {
-  scenario: ReturnType<typeof loadGameData>['scenarios'][number];
-  onStart: (lordId: string | null) => void;
-  data: ReturnType<typeof loadGameData>;
+  data: Data;
+  onStart: (scenarioId: string, lordId: string | null) => void;
 }) {
+  const [scenarioId, setScenarioId] = useState(data.scenarios[0]!.id);
+  const scenario = data.scenarios.find((s) => s.id === scenarioId)!;
   const name = (id: string) => data.officers.find((o) => o.id === id)?.name ?? id;
+
   return (
     <div className="start">
       <h1>삼국지 II · 웹</h1>
-      <p className="subtitle">
-        AI 멀티에이전트 삼국지 · 시나리오 {scenario.year}년 「{scenario.title}」
-      </p>
+      <p className="subtitle">AI 멀티에이전트 삼국지 · 역사 기반 데이터</p>
+
+      <div className="scenario-tabs">
+        {data.scenarios.map((s) => (
+          <button
+            key={s.id}
+            className={`tab ${s.id === scenarioId ? 'active' : ''}`}
+            onClick={() => setScenarioId(s.id)}
+          >
+            {s.year}년 · {s.title}
+          </button>
+        ))}
+      </div>
+
       <h2>군주를 선택하세요</h2>
       <div className="lord-grid">
         {scenario.playableLords.map((lid) => (
@@ -43,26 +63,31 @@ function StartScreen({
             key={lid}
             className="lord-card"
             style={{ borderColor: factionColor(lid) }}
-            onClick={() => onStart(lid)}
+            onClick={() => onStart(scenarioId, lid)}
           >
             <span className="dot" style={{ background: factionColor(lid) }} />
             {name(lid)}
           </button>
         ))}
       </div>
-      <button className="observe" onClick={() => onStart(null)}>
+      <button className="observe" onClick={() => onStart(scenarioId, null)}>
         관전 모드 (모든 세력 AI)
       </button>
       <p className="hint">
-        선택한 군주는 직접 명령을 내리고, 나머지 CPU 군주는 AI가 자동으로 판단합니다. (현재 규칙기반
-        AI — 이후 Claude 에이전트로 교체 예정)
+        선택한 군주는 직접 명령을 내리고, 나머지 CPU 군주는 규칙기반 AI가 자동으로 판단합니다.
       </p>
     </div>
   );
 }
 
-function GameScreen({ humanLordId }: { humanLordId: string | null }) {
-  const g = useGame(SCENARIO_ID, humanLordId);
+function GameScreen({
+  scenarioId,
+  humanLordId,
+}: {
+  scenarioId: string;
+  humanLordId: string | null;
+}) {
+  const g = useGame(scenarioId, humanLordId);
   const [selected, setSelected] = useState<string | null>(null);
 
   const sel = selected ? g.state.cities[selected] : null;
@@ -73,15 +98,10 @@ function GameScreen({ humanLordId }: { humanLordId: string | null }) {
   const mySoldiers = myCities.reduce((n, c) => n + c.soldiers, 0);
   const myGold = myCities.reduce((n, c) => n + c.gold, 0);
 
-  // 선택 도시에서 낼 수 있는 플레이어 명령
   const cmds: Command[] =
     selected && humanLordId && sel?.lordId === humanLordId
       ? g.legalFor(humanLordId).filter((c) => c.cityId === selected)
       : [];
-  const officerInCity = (cityId: string) =>
-    Object.values(g.state.officers).find(
-      (o) => o.cityId === cityId && (o.status === 'lord' || o.status === 'officer'),
-    );
 
   return (
     <div className="game">
@@ -138,7 +158,7 @@ function GameScreen({ humanLordId }: { humanLordId: string | null }) {
                   토지 <b>{sel.land}</b>
                 </li>
                 <li>
-                  인구 <b>{sel.population.toLocaleString()}</b>
+                  치수 <b>{sel.flood}</b>
                 </li>
                 <li>
                   민심 <b>{sel.publicOrder}</b>
@@ -146,12 +166,10 @@ function GameScreen({ humanLordId }: { humanLordId: string | null }) {
               </ul>
               {cmds.length > 0 && (
                 <div className="commands">
-                  <div className="cmd-title">
-                    명령 ({name(officerInCity(selected!)?.officerId ?? '')})
-                  </div>
+                  <div className="cmd-title">명령</div>
                   {dedupeCommands(cmds).map((c, i) => (
                     <button key={i} className="cmd" onClick={() => g.issue(c)}>
-                      {commandLabel(c, g.city)}
+                      {commandLabel(c, name, g.city)}
                     </button>
                   ))}
                 </div>
@@ -181,7 +199,7 @@ function dedupeCommands(cmds: Command[]): Command[] {
   const seen = new Set<string>();
   const out: Command[] = [];
   for (const c of cmds) {
-    const key = `${c.type}:${c.params.targetCityId ?? ''}`;
+    const key = `${c.type}:${c.params.targetCityId ?? ''}:${c.params.targetOfficerId ?? ''}`;
     if (seen.has(key)) continue;
     seen.add(key);
     out.push(c);
@@ -189,12 +207,28 @@ function dedupeCommands(cmds: Command[]): Command[] {
   return out;
 }
 
-function commandLabel(c: Command, city: (id: string) => { name: string } | undefined) {
+function commandLabel(
+  c: Command,
+  name: (id: string) => string,
+  city: (id: string) => { name: string } | undefined,
+) {
   switch (c.type) {
     case 'develop':
       return '🌾 개발 (토지↑)';
+    case 'floodControl':
+      return '💧 치수 (수해방지↑)';
+    case 'commerce':
+      return '🪙 상업 (민심↑)';
+    case 'farm':
+      return '🌾 농업 (군량↑)';
     case 'draft':
       return '⚔️ 징병 (병사↑)';
+    case 'recruit':
+      return `🤝 등용 → ${name(String(c.params.targetOfficerId))}`;
+    case 'reward':
+      return `🎁 포상 → ${name(String(c.params.targetOfficerId))}`;
+    case 'move':
+      return `➡️ 이동 → ${city(String(c.params.targetCityId))?.name ?? c.params.targetCityId}`;
     case 'invade':
       return `🏴 침공 → ${city(String(c.params.targetCityId))?.name ?? c.params.targetCityId}`;
     default:
