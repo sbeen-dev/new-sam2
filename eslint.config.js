@@ -14,4 +14,15 @@ export default tseslint.config(
       eqeqeq: ['error', 'always'],
     },
   },
+  {
+    // Node 스크립트/데모: Node 전역 허용
+    files: ['**/*.mjs', 'scripts/**/*.js', '**/demo.ts'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        structuredClone: 'readonly',
+      },
+    },
+  },
 );

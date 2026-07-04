@@ -13,7 +13,6 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "declaration": true,
-    "sourceMap": true,
-    "composite": true
+    "sourceMap": true
   }
 }
