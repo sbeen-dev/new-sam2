@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import type { Command } from '@sam2/shared';
+import type { Command, GameEvent } from '@sam2/shared';
 import { loadGameData } from '@sam2/engine/web';
 import { effWar, effInt, effCha } from '@sam2/engine';
 import { useGame } from './useGame';
@@ -96,6 +96,7 @@ function GameScreen({
   const [selected, setSelected] = useState<string | null>(null);
   const [expandedOfficer, setExpandedOfficer] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [battle, setBattle] = useState<GameEvent[] | null>(null);
 
   const sel = selected ? g.state.cities[selected] : null;
   const selCity = selected ? g.city(selected) : null;
@@ -250,8 +251,9 @@ function GameScreen({
                                 key={i}
                                 className="cmd"
                                 onClick={() => {
-                                  g.issue(c);
+                                  const evs = g.issue(c);
                                   setExpandedOfficer(null);
+                                  if (c.type === 'invade') setBattle(evs);
                                 }}
                               >
                                 {commandLabel(c, name, g.city)}
@@ -285,6 +287,38 @@ function GameScreen({
           </ul>
         </section>
       </aside>
+
+      {battle && <BattleModal events={battle} onClose={() => setBattle(null)} />}
+    </div>
+  );
+}
+
+/** 침공 결과 연출: 일기토 → 승패 → 포로/전리품 */
+function BattleModal({ events, onClose }: { events: GameEvent[]; onClose: () => void }) {
+  const duel = events.find((e) => e.kind === 'duel');
+  const conquer = events.find((e) => e.kind === 'conquer');
+  const repelled = events.find((e) => e.kind === 'repelled');
+  const captures = events.filter((e) => e.kind === 'capture');
+  const item = events.find((e) => e.kind === 'item');
+  const won = !!conquer;
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className={`battle-modal ${won ? 'win' : 'lose'}`} onClick={(e) => e.stopPropagation()}>
+        <div className="battle-head">{won ? '⚔️ 점령 성공' : '🛡️ 침공 실패'}</div>
+        {duel && <div className="battle-duel">🗡️ {duel.message.replace('일기토: ', '')}</div>}
+        <div className="battle-body">
+          {(conquer ?? repelled)?.message}
+          {captures.map((c, i) => (
+            <div key={i} className="battle-extra">
+              ⛓️ {c.message}
+            </div>
+          ))}
+          {item && <div className="battle-extra gold">🏆 {item.message}</div>}
+        </div>
+        <button className="battle-close" onClick={onClose}>
+          확인
+        </button>
+      </div>
     </div>
   );
 }

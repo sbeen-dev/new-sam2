@@ -438,3 +438,92 @@ body {
   color: var(--muted);
   background: transparent;
 }
+
+/* ===== 전투 모달 ===== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fadein 0.2s ease;
+}
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+}
+.battle-modal {
+  width: min(420px, 90vw);
+  background: var(--panel);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 22px;
+  text-align: center;
+  animation: pop 0.25s cubic-bezier(0.2, 1.4, 0.5, 1);
+}
+@keyframes pop {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+}
+.battle-modal.win {
+  border-color: #d0a24c;
+}
+.battle-modal.lose {
+  border-color: #5b8fa6;
+}
+.battle-head {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.battle-duel {
+  background: var(--panel2);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 12px;
+  color: #e0b0ae;
+}
+.battle-body {
+  color: var(--text);
+  line-height: 1.6;
+}
+.battle-extra {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-top: 6px;
+}
+.battle-extra.gold {
+  color: var(--accent);
+}
+.battle-close {
+  margin-top: 18px;
+  padding: 10px 30px;
+  background: var(--accent);
+  color: #1a1a1a;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ===== 반응형(좁은 화면) ===== */
+@media (max-width: 860px) {
+  .game {
+    grid-template-columns: 1fr;
+    grid-template-rows: 45vh 1fr;
+    height: auto;
+    min-height: 100vh;
+  }
+  .sidebar {
+    border-left: none;
+    border-top: 1px solid var(--line);
+  }
+  .start h1 {
+    font-size: 2rem;
+  }
+}

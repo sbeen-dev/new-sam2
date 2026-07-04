@@ -27,8 +27,8 @@ export interface GameApi {
   /** 이번 턴에 이미 행동한 장수 id (장수 1명=그달 1회) */
   actedOfficers: string[];
   legalFor: (lordId: string) => Command[];
-  /** 플레이어 명령 즉시 적용 */
-  issue: (cmd: Command) => void;
+  /** 플레이어 명령 즉시 적용. 그 명령이 만든 이벤트를 반환(전투 연출 등에 사용). */
+  issue: (cmd: Command) => GameEvent[];
   /** 한 달 진행: AI 세력 처리 + 정산 */
   nextMonth: () => void;
   /** 현재 국면을 브라우저에 저장 */
@@ -60,15 +60,14 @@ export function useGame(scenarioId: string, humanLordId: string | null): GameApi
   }, []);
 
   const issue = useCallback(
-    (cmd: Command) => {
-      setState((prev) => {
-        const r = applyCommands(prev, idx, [cmd]);
-        if (r.events.length) setEvents((e) => [...r.events, ...e].slice(0, 200));
-        return r.state;
-      });
+    (cmd: Command): GameEvent[] => {
+      const r = applyCommands(state, idx, [cmd]);
+      setState(r.state);
+      if (r.events.length) setEvents((e) => [...r.events, ...e].slice(0, 200));
       setActedOfficers((a) => (a.includes(cmd.actorOfficerId) ? a : [...a, cmd.actorOfficerId]));
+      return r.events;
     },
-    [idx],
+    [idx, state],
   );
 
   const nextMonth = useCallback(() => {
