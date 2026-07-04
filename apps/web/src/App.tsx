@@ -24,6 +24,7 @@ export function App() {
       key={choice.scenarioId + choice.lordId}
       scenarioId={choice.scenarioId}
       humanLordId={choice.lordId}
+      onExit={() => setChoice(null)}
     />
   );
 }
@@ -83,12 +84,15 @@ function StartScreen({
 function GameScreen({
   scenarioId,
   humanLordId,
+  onExit,
 }: {
   scenarioId: string;
   humanLordId: string | null;
+  onExit: () => void;
 }) {
   const g = useGame(scenarioId, humanLordId);
   const [selected, setSelected] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
 
   const sel = selected ? g.state.cities[selected] : null;
   const selCity = selected ? g.city(selected) : null;
@@ -112,6 +116,7 @@ function GameScreen({
           selectedCityId={selected}
           onSelect={setSelected}
           humanLordId={humanLordId}
+          flashedCities={g.flashedCities}
         />
       </div>
 
@@ -132,6 +137,21 @@ function GameScreen({
           <button className="next" onClick={g.nextMonth} disabled={!!g.winner}>
             다음 달 ▶
           </button>
+          <div className="controls">
+            <button
+              onClick={() => {
+                g.save();
+                setSaved(true);
+                setTimeout(() => setSaved(false), 1500);
+              }}
+            >
+              {saved ? '저장됨 ✓' : '저장'}
+            </button>
+            <button onClick={() => g.load()} disabled={!g.hasSave}>
+              불러오기
+            </button>
+            <button onClick={onExit}>새 게임</button>
+          </div>
         </header>
 
         {g.winner && <div className="victory">🏆 천하통일: {name(g.winner)}</div>}

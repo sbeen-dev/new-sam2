@@ -54,6 +54,7 @@ export const CONFIG = {
     minInvadeSoldiers: 2000, // 침공 최소 병력
     duelWinnerBonus: 0.12, // 일기토 승리 진영 전투력 가산
     itemFindChance: 0.18, // 점령 시 전리품 발견 확률
+    defenderBonus: 0.2, // 수비 진영 전투력 가산(홈 이점 — 국경 반복 점령 완화)
   },
   /** 월 정산 이벤트 */
   events: {

@@ -144,6 +144,23 @@ body {
   stroke: #121218;
   stroke-width: 3px;
 }
+.map .flash-ring {
+  stroke: #ffd54a;
+  stroke-width: 3;
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: flashpulse 1.4s ease-out forwards;
+}
+@keyframes flashpulse {
+  0% {
+    stroke-opacity: 0.95;
+    transform: scale(1);
+  }
+  100% {
+    stroke-opacity: 0;
+    transform: scale(3.2);
+  }
+}
 
 .sidebar {
   background: var(--panel);
@@ -180,6 +197,29 @@ body {
   cursor: pointer;
 }
 .next:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.controls {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.controls button {
+  flex: 1;
+  padding: 6px 4px;
+  font-size: 0.8rem;
+  background: var(--panel2);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.controls button:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--accent);
+}
+.controls button:disabled {
   opacity: 0.4;
   cursor: default;
 }

@@ -74,15 +74,19 @@ function adjacentEnemy(state: GameState, idx: DataIndex, cityId: string, lordId:
   return adj.some((a) => state.cities[a]!.lordId !== lordId);
 }
 
-/** 방어 병력이 자기보다 확실히 적은 인접 도시만 노린다(무모한 침공 방지). */
+// AI는 수비 홈 이점을 감안해 확실한 우세(수비의 약 1.7배 + 여유 병력)일 때만 침공.
+const INVADE_FORCE_RATIO = 1.7;
+const INVADE_MIN_MARGIN = 3000;
+
+/** 방어 병력 대비 확실히 우세한 인접 도시만 노린다(무모한 침공·국경 반복 점령 방지). */
 function pickBestInvade(state: GameState, options: Command[]): Command | null {
   const invades = options.filter((o) => o.type === 'invade');
   let best: Command | null = null;
-  let bestGap = 0;
+  let bestGap = INVADE_MIN_MARGIN;
   for (const inv of invades) {
     const from = state.cities[inv.cityId]!;
     const target = state.cities[String(inv.params.targetCityId)]!;
-    const gap = from.soldiers - target.soldiers * 1.3;
+    const gap = from.soldiers - target.soldiers * INVADE_FORCE_RATIO;
     if (gap > bestGap) {
       bestGap = gap;
       best = inv;

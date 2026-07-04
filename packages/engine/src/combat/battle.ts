@@ -83,7 +83,13 @@ export function resolveBattle(
   const jitter = () => 1 + (roll() * 2 - 1) * CONFIG.combat.rngJitter;
   const atkPower =
     attackingSoldiers * (1 + atkWar * CONFIG.combat.warBonus) * atkDuelBonus * jitter();
-  const defPower = def.soldiers * (1 + defWar * CONFIG.combat.warBonus) * defDuelBonus * jitter();
+  // 수비 진영은 홈 이점(defenderBonus)을 받는다 → 재점령엔 확실한 우세가 필요
+  const defPower =
+    def.soldiers *
+    (1 + defWar * CONFIG.combat.warBonus) *
+    defDuelBonus *
+    (1 + CONFIG.combat.defenderBonus) *
+    jitter();
 
   const attackerWins = atkPower > defPower;
   const ratio = Math.min(1, defPower / Math.max(1, atkPower));

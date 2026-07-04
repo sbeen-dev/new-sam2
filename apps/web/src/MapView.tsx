@@ -11,9 +11,18 @@ interface Props {
   selectedCityId: string | null;
   onSelect: (cityId: string) => void;
   humanLordId: string | null;
+  flashedCities: string[];
 }
 
-export function MapView({ cities, state, selectedCityId, onSelect, humanLordId }: Props) {
+export function MapView({
+  cities,
+  state,
+  selectedCityId,
+  onSelect,
+  humanLordId,
+  flashedCities,
+}: Props) {
+  const flashSet = new Set(flashedCities);
   const pos = new Map(cities.map((c) => [c.id, { x: toPx(c.x), y: toPx(c.y) }]));
 
   // 인접선(중복 제거)
@@ -41,8 +50,10 @@ export function MapView({ cities, state, selectedCityId, onSelect, humanLordId }
         const isMine = humanLordId && cs.lordId === humanLordId;
         const isSel = c.id === selectedCityId;
         const r = 8 + Math.min(9, cs.soldiers / 2500);
+        const isFlash = flashSet.has(c.id);
         return (
           <g key={c.id} className="node" onClick={() => onSelect(c.id)}>
+            {isFlash && <circle cx={p.x} cy={p.y} r={r} className="flash-ring" fill="none" />}
             <circle
               cx={p.x}
               cy={p.y}
