@@ -1,8 +1,9 @@
 import officersJson from '../data/officers.json' with { type: 'json' };
 import citiesJson from '../data/cities.json' with { type: 'json' };
 import scenariosJson from '../data/scenarios.json' with { type: 'json' };
+import itemsJson from '../data/items.json' with { type: 'json' };
 import type { GameData } from './data.js';
-import type { Officer, City, Scenario } from '@sam2/shared';
+import type { Officer, City, Scenario, Item } from '@sam2/shared';
 
 /**
  * 브라우저(번들러) 환경 데이터 로더. JSON을 정적 import해 번들에 포함한다.
@@ -13,5 +14,6 @@ export function loadGameData(): GameData {
     officers: officersJson.officers as Officer[],
     cities: citiesJson.cities as City[],
     scenarios: scenariosJson.scenarios as Scenario[],
+    items: itemsJson.items as Item[],
   };
 }

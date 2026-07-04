@@ -53,6 +53,12 @@ export function useGame(scenarioId: string, humanLordId: string | null): GameApi
     });
   }, [idx, winner]);
 
+  // 군주가 사망해 후계자로 세력이 승계되면(isHuman 유지) 플레이어도 후계자를 따라간다.
+  const activeHumanLordId = humanLordId
+    ? (Object.keys(state.lords).find((l) => state.lords[l]!.isHuman && state.lords[l]!.alive) ??
+      humanLordId)
+    : null;
+
   return {
     state,
     officer: (id) => idx.officer.get(id),
@@ -60,7 +66,7 @@ export function useGame(scenarioId: string, humanLordId: string | null): GameApi
     cities: data.cities,
     events,
     winner,
-    humanLordId,
+    humanLordId: activeHumanLordId,
     legalFor: (lordId) => listLegalCommands(state, idx, lordId),
     issue,
     nextMonth,

@@ -32,6 +32,7 @@ export function loadScenario(data: GameData, scenarioId: string, seed: number): 
       status: 'free',
       warGrowth: 0,
       intGrowth: 0,
+      chaGrowth: 0,
       captorId: null,
       dead: false,
     };
@@ -64,6 +65,7 @@ export function loadScenario(data: GameData, scenarioId: string, seed: number): 
         status: oid === lord.lordId ? 'lord' : 'officer',
         warGrowth: 0,
         intGrowth: 0,
+        chaGrowth: 0,
         captorId: null,
         dead: false,
       };
@@ -88,6 +90,7 @@ export function loadScenario(data: GameData, scenarioId: string, seed: number): 
     cities,
     officers,
     diplomacy: { relations: {} },
+    foundItems: [],
     log: [],
   };
 }

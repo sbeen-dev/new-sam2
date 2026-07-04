@@ -53,6 +53,15 @@ export const CONFIG = {
     attackerMoveRatio: 0.6, // 승리 시 점령지로 이동하는 공격 병력 비율
     minInvadeSoldiers: 2000, // 침공 최소 병력
     duelWinnerBonus: 0.12, // 일기토 승리 진영 전투력 가산
+    itemFindChance: 0.18, // 점령 시 전리품 발견 확률
+  },
+  /** 월 정산 이벤트 */
+  events: {
+    floodBaseChance: 0.006, // 도시별 수해 기본 확률(치수 낮을수록 증가)
+    floodDamageFactor: 0.02, // (1 - flood/1000) 당 추가 수해 확률
+    floodDamageRatio: 0.08, // 수해 시 인구·병사 손실 비율
+    plagueChance: 0.004, // 도시별 역병 확률
+    plagueDamageRatio: 0.06,
   },
   loyalty: {
     lordInit: 100,

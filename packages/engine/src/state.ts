@@ -10,6 +10,11 @@ export function effInt(state: GameState, baseInt: number, officerId: string): nu
   return baseInt + (state.officers[officerId]?.intGrowth ?? 0);
 }
 
+/** 실효 매력 = 정적 cha + 성장치. */
+export function effCha(state: GameState, baseCha: number, officerId: string): number {
+  return baseCha + (state.officers[officerId]?.chaGrowth ?? 0);
+}
+
 /** 두 군주 관계의 정규화 키(정렬 쌍) */
 export function relationKey(a: string, b: string): string {
   return [a, b].sort().join(':');

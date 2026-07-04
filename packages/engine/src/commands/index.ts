@@ -381,6 +381,31 @@ function nextRoll(s: GameState): { value: number; rng: GameState['rng'] } {
   return { value: r.value, rng: r.next };
 }
 
+/** 점령 시 전리품 발견(확률). 성공 시 발견 장수 능력치 상승 후 이벤트 반환. s를 직접 변형. */
+function tryFindItem(s: GameState, idx: DataIndex, officerId: string): GameEvent | null {
+  const r1 = nextRoll(s);
+  s.rng = r1.rng;
+  if (r1.value >= CONFIG.combat.itemFindChance) return null;
+  const pool = [...idx.item.values()].filter((it) => !s.foundItems.includes(it.id));
+  if (pool.length === 0) return null;
+  const r2 = nextRoll(s);
+  s.rng = r2.rng;
+  const item = pool[Math.floor(r2.value * pool.length)]!;
+  s.foundItems.push(item.id);
+  const ost = s.officers[officerId];
+  if (ost) {
+    if (item.stat === 'war') ost.warGrowth += item.bonus;
+    else if (item.stat === 'int') ost.intGrowth += item.bonus;
+    else ost.chaGrowth += item.bonus;
+  }
+  const statName = item.stat === 'war' ? '무력' : item.stat === 'int' ? '지력' : '매력';
+  return {
+    turn: s.turn,
+    kind: 'item',
+    message: `${idx.officer.get(officerId)?.name}이(가) ${item.name} 획득 (${statName} +${item.bonus})`,
+  };
+}
+
 /** 포로 처리: 등용(아군화)·해방(재야)·참수(제거). */
 function applyCaptive(
   state: GameState,
@@ -594,6 +619,9 @@ function applyInvade(state: GameState, idx: DataIndex, cmd: Command): ApplyResul
         prevOwner,
       }),
     );
+    // 전리품 발견
+    const found = tryFindItem(s, idx, actor.id);
+    if (found) events.push(found);
     // 정복당한 군주가 도시를 모두 잃으면 멸망(군주도 포로)
     if (prevOwner && !Object.values(s.cities).some((c) => c.lordId === prevOwner)) {
       s.lords[prevOwner] = { ...s.lords[prevOwner]!, alive: false };

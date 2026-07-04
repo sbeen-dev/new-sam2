@@ -16,5 +16,6 @@ export function loadGameData(): GameData {
     officers: read('officers.json').officers,
     cities: read('cities.json').cities,
     scenarios: read('scenarios.json').scenarios,
+    items: read('items.json').items,
   };
 }

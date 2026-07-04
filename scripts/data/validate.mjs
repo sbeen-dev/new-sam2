@@ -26,6 +26,7 @@ const STAT_MAX = 100;
 const { officers } = load('officers.json');
 const { cities } = load('cities.json');
 const { scenarios } = load('scenarios.json');
+const { items } = load('items.json');
 
 // --- officers ---
 const officerIds = new Set();
@@ -102,9 +103,21 @@ for (const s of scenarios) {
   }
 }
 
+// --- items ---
+const itemIds = new Set();
+const ITEM_STATS = ['war', 'int', 'cha'];
+const ITEM_TYPES = ['sword', 'book', 'treasure'];
+for (const it of items) {
+  if (itemIds.has(it.id)) err(`item 중복 id: ${it.id}`);
+  itemIds.add(it.id);
+  if (!ITEM_TYPES.includes(it.type)) err(`item ${it.id} 잘못된 type: ${it.type}`);
+  if (!ITEM_STATS.includes(it.stat)) err(`item ${it.id} 잘못된 stat: ${it.stat}`);
+  if (typeof it.bonus !== 'number' || it.bonus <= 0) err(`item ${it.id} bonus 이상: ${it.bonus}`);
+}
+
 // --- 리포트 ---
 console.log(
-  `검증 대상: officers=${officers.length}, cities=${cities.length}, scenarios=${scenarios.length}`,
+  `검증 대상: officers=${officers.length}, cities=${cities.length}, scenarios=${scenarios.length}, items=${items.length}`,
 );
 if (errors.length) {
   console.error(`\n❌ 데이터 검증 실패 (${errors.length}건):`);

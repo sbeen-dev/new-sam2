@@ -220,6 +220,27 @@ describe('포로·성장·모반', () => {
   });
 });
 
+describe('아이템·수명', () => {
+  it('오랜 게임에서 전리품이 발견되고 중복되지 않는다', () => {
+    let s = newGame(4);
+    for (let i = 0; i < 120; i++) s = runTurn(s, idx).state;
+    expect(s.foundItems.length).toBeGreaterThan(0);
+    expect(new Set(s.foundItems).size).toBe(s.foundItems.length);
+  });
+
+  it('수명: 사망 연도 도달 시 군주 사망 → 후계 승계', () => {
+    let s = newGame();
+    s = structuredClone(s);
+    s.year = 191; // 손견(diedYear 191)
+    const r = resolve(s, idx);
+    expect(r.state.officers.sun_jian!.dead).toBe(true);
+    // 손책(매력88)이 손견 세력을 승계
+    expect(r.state.officers.sun_ce!.status).toBe('lord');
+    expect(r.state.cities.changsha!.lordId).toBe('sun_ce');
+    expect(r.events.some((e) => e.kind === 'succession')).toBe(true);
+  });
+});
+
 describe('정산', () => {
   it('세수로 금이 늘고 달이 진행된다', () => {
     const s = newGame();

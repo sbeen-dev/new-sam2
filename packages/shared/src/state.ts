@@ -34,5 +34,7 @@ export interface GameState {
   cities: Record<string, CityState>;
   officers: Record<string, OfficerState>;
   diplomacy: DiplomacyState;
+  /** 이미 발견된 아이템 id (중복 발견 방지) */
+  foundItems: string[];
   log: GameEvent[];
 }

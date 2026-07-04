@@ -1,0 +1,18 @@
+{
+  "_meta": {
+    "note": "전리품 아이템. 실제 삼국지 명물(무기·병법서·보물) 기반. 획득 시 소유 장수 능력치 영구 상승. 보정치는 밸런싱 전 값.",
+    "statScale": "war/int/cha += bonus"
+  },
+  "items": [
+    { "id": "sword_qinggang", "name": "청강검", "type": "sword", "stat": "war", "bonus": 3 },
+    { "id": "sword_yitian", "name": "의천검", "type": "sword", "stat": "war", "bonus": 4 },
+    { "id": "halberd_fangtian", "name": "방천화극", "type": "sword", "stat": "war", "bonus": 5 },
+    { "id": "bow_taishi", "name": "명궁", "type": "sword", "stat": "war", "bonus": 2 },
+    { "id": "book_sunzi", "name": "손자병법", "type": "book", "stat": "int", "bonus": 4 },
+    { "id": "book_liutao", "name": "육도삼략", "type": "book", "stat": "int", "bonus": 3 },
+    { "id": "book_mengde", "name": "맹덕신서", "type": "book", "stat": "int", "bonus": 3 },
+    { "id": "seal_chuanguo", "name": "전국옥새", "type": "treasure", "stat": "cha", "bonus": 5 },
+    { "id": "jade_heshi", "name": "화씨벽", "type": "treasure", "stat": "cha", "bonus": 3 },
+    { "id": "horse_chitu", "name": "적토마", "type": "treasure", "stat": "war", "bonus": 3 }
+  ]
+}

@@ -6,5 +6,6 @@ export * from './officer.js';
 export * from './city.js';
 export * from './command.js';
 export * from './scenario.js';
+export * from './item.js';
 export * from './state.js';
 export * from './agent.js';

@@ -33,6 +33,8 @@ export interface OfficerState {
   warGrowth: number;
   /** 지력 성장치(참모 성장으로 누적). 실효 지력 = 정적 int + intGrowth */
   intGrowth: number;
+  /** 매력 성장치(보물 획득 등). 실효 매력 = 정적 cha + chaGrowth */
+  chaGrowth: number;
   /** 포로일 때, 사로잡은 군주 id */
   captorId: string | null;
   /** 사망(수명/참수) 여부. true면 게임에서 제외. */

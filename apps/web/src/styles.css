@@ -295,6 +295,22 @@ body {
 .ev-aid {
   border-left-color: #5a9367;
 }
+.ev-item,
+.ev-growth {
+  border-left-color: #d0a24c;
+}
+.ev-flood,
+.ev-plague {
+  border-left-color: #4c8fb0;
+}
+.ev-death,
+.ev-succession {
+  border-left-color: #b23b3b;
+}
+.ev-capture,
+.ev-execute {
+  border-left-color: #9c7fb0;
+}
 .ev.muted {
   color: var(--muted);
   background: transparent;
