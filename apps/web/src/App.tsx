@@ -416,22 +416,42 @@ function GameScreen({
       </aside>
 
       {battle && <BattleModal events={battle} onClose={() => setBattle(null)} />}
+      {g.defenseAlert && (
+        <BattleModal events={g.defenseAlert} defense onClose={g.clearDefenseAlert} />
+      )}
     </div>
   );
 }
 
-/** 침공 결과 연출: 일기토 → 승패 → 포로/전리품 */
-function BattleModal({ events, onClose }: { events: GameEvent[]; onClose: () => void }) {
+/** 전투 결과 연출: 일기토 → 승패 → 포로/전리품. defense=수비(도시 상실) 관점. */
+function BattleModal({
+  events,
+  onClose,
+  defense = false,
+}: {
+  events: GameEvent[];
+  onClose: () => void;
+  defense?: boolean;
+}) {
   const duel = events.find((e) => e.kind === 'duel');
   const conquer = events.find((e) => e.kind === 'conquer');
   const repelled = events.find((e) => e.kind === 'repelled');
+  const fall = events.find((e) => e.kind === 'lordFall');
   const captures = events.filter((e) => e.kind === 'capture');
   const item = events.find((e) => e.kind === 'item');
-  const won = !!conquer;
+  // 수비 관점: 적이 점령 = 패배. 공격 관점: 내가 점령 = 승리.
+  const won = defense ? !conquer : !!conquer;
+  const head = defense
+    ? conquer
+      ? '🏳️ 도시 함락'
+      : '🛡️ 방어 성공'
+    : won
+      ? '⚔️ 점령 성공'
+      : '🛡️ 침공 실패';
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className={`battle-modal ${won ? 'win' : 'lose'}`} onClick={(e) => e.stopPropagation()}>
-        <div className="battle-head">{won ? '⚔️ 점령 성공' : '🛡️ 침공 실패'}</div>
+        <div className="battle-head">{head}</div>
         {duel && <div className="battle-duel">🗡️ {duel.message.replace('일기토: ', '')}</div>}
         <div className="battle-body">
           {(conquer ?? repelled)?.message}
@@ -440,6 +460,7 @@ function BattleModal({ events, onClose }: { events: GameEvent[]; onClose: () => 
               ⛓️ {c.message}
             </div>
           ))}
+          {fall && <div className="battle-extra">💀 {fall.message}</div>}
           {item && <div className="battle-extra gold">🏆 {item.message}</div>}
         </div>
         <button className="battle-close" onClick={onClose}>

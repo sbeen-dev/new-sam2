@@ -37,6 +37,9 @@ export interface GameApi {
   /** 저장된 국면 불러오기 (없으면 false) */
   load: () => boolean;
   hasSave: boolean;
+  /** 직전 턴에 내 도시가 적에게 함락됐을 때의 이벤트(방어 연출). 없으면 null */
+  defenseAlert: GameEvent[] | null;
+  clearDefenseAlert: () => void;
 }
 
 export function useGame(
@@ -60,6 +63,7 @@ export function useGame(
   const [winner, setWinner] = useState<string | null>(null);
   const [flashedCities, setFlashedCities] = useState<string[]>([]);
   const [actedOfficers, setActedOfficers] = useState<string[]>([]);
+  const [defenseAlert, setDefenseAlert] = useState<GameEvent[] | null>(null);
   const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const flash = useCallback((ids: string[]) => {
@@ -82,6 +86,10 @@ export function useGame(
   const nextMonth = useCallback(() => {
     setState((prev) => {
       if (winner) return prev;
+      // 이번 턴의 플레이어(사람) 세력 id
+      const humanId = Object.keys(prev.lords).find(
+        (l) => prev.lords[l]!.isHuman && prev.lords[l]!.alive,
+      );
       const r = runTurn(prev, idx);
       setEvents((e) => [...r.events, ...e].slice(0, 200));
       if (r.winner) setWinner(r.winner);
@@ -90,6 +98,12 @@ export function useGame(
         (id) => r.state.cities[id]!.lordId !== prev.cities[id]!.lordId,
       );
       flash(changed);
+      // 내 도시가 함락됐는지(방어 연출)
+      if (humanId) {
+        const lost = r.events.filter((e) => e.kind === 'conquer' && e.data?.prevOwner === humanId);
+        if (lost.length)
+          setDefenseAlert(r.events.filter((e) => lost.includes(e) || e.kind === 'lordFall'));
+      }
       return r.state;
     });
     setActedOfficers([]); // 새 달 → 행동 초기화
@@ -138,5 +152,7 @@ export function useGame(
     save,
     load,
     hasSave: typeof localStorage !== 'undefined' && !!localStorage.getItem(SAVE_KEY),
+    defenseAlert,
+    clearDefenseAlert: () => setDefenseAlert(null),
   };
 }
