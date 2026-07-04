@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react';
 import type { Command } from '@sam2/shared';
 import { loadGameData } from '@sam2/engine/web';
+import { effWar, effInt, effCha } from '@sam2/engine';
 import { useGame } from './useGame';
 import { MapView } from './MapView';
+import { Avatar } from './Avatar';
 import { factionColor } from './faction';
 
 type Data = ReturnType<typeof loadGameData>;
@@ -92,20 +94,41 @@ function GameScreen({
 }) {
   const g = useGame(scenarioId, humanLordId);
   const [selected, setSelected] = useState<string | null>(null);
+  const [expandedOfficer, setExpandedOfficer] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
   const sel = selected ? g.state.cities[selected] : null;
   const selCity = selected ? g.city(selected) : null;
   const name = (id: string) => g.officer(id)?.name ?? id;
+  const acted = new Set(g.actedOfficers);
 
   const myCities = Object.values(g.state.cities).filter((c) => c.lordId === humanLordId);
   const mySoldiers = myCities.reduce((n, c) => n + c.soldiers, 0);
   const myGold = myCities.reduce((n, c) => n + c.gold, 0);
 
-  const cmds: Command[] =
-    selected && humanLordId && sel?.lordId === humanLordId
-      ? g.legalFor(humanLordId).filter((c) => c.cityId === selected)
-      : [];
+  const isMyCity = !!(selected && humanLordId && sel?.lordId === humanLordId);
+  // 선택 도시에 주재하는 내 장수(+포로) 및 도시 명령
+  const officersHere = selected
+    ? Object.values(g.state.officers).filter(
+        (o) =>
+          o.cityId === selected &&
+          !o.dead &&
+          (o.status === 'officer' || o.status === 'lord' || o.status === 'captive'),
+      )
+    : [];
+  const cityCmds: Command[] = isMyCity
+    ? g.legalFor(humanLordId!).filter((c) => c.cityId === selected)
+    : [];
+  const cmdsForOfficer = (oid: string) =>
+    dedupeCommands(cityCmds.filter((c) => c.actorOfficerId === oid));
+  const effStat = (oid: string) => {
+    const base = g.officer(oid)!;
+    return {
+      int: effInt(g.state, base.int, oid),
+      war: effWar(g.state, base.war, oid),
+      cha: effCha(g.state, base.cha, oid),
+    };
+  };
 
   return (
     <div className="game">
@@ -184,14 +207,66 @@ function GameScreen({
                   민심 <b>{sel.publicOrder}</b>
                 </li>
               </ul>
-              {cmds.length > 0 && (
-                <div className="commands">
-                  <div className="cmd-title">명령</div>
-                  {dedupeCommands(cmds).map((c, i) => (
-                    <button key={i} className="cmd" onClick={() => g.issue(c)}>
-                      {commandLabel(c, name, g.city)}
-                    </button>
-                  ))}
+              {officersHere.length > 0 && (
+                <div className="officers">
+                  <div className="cmd-title">
+                    장수 {officersHere.filter((o) => o.status !== 'captive').length}명
+                    {isMyCity &&
+                      ` · 행동 ${
+                        officersHere.filter((o) => o.status !== 'captive' && acted.has(o.officerId))
+                          .length
+                      }/${officersHere.filter((o) => o.status !== 'captive').length}`}
+                  </div>
+                  {officersHere.map((o) => {
+                    const base = g.officer(o.officerId)!;
+                    const st = effStat(o.officerId);
+                    const captive = o.status === 'captive';
+                    const isActed = acted.has(o.officerId);
+                    const cmds = captive ? [] : cmdsForOfficer(o.officerId);
+                    const open = expandedOfficer === o.officerId;
+                    return (
+                      <div key={o.officerId} className={`officer ${isActed ? 'done' : ''}`}>
+                        <button
+                          className="officer-head"
+                          onClick={() => setExpandedOfficer(open ? null : o.officerId)}
+                          disabled={!isMyCity || captive || (isActed && cmds.length === 0)}
+                        >
+                          <Avatar name={base.name} lordId={o.lordId} size={30} dim={isActed} />
+                          <span className="oname">
+                            {base.name}
+                            {o.status === 'lord' && <span className="tag lord">군주</span>}
+                            {captive && <span className="tag cap">포로</span>}
+                            {isActed && !captive && <span className="tag ok">✓</span>}
+                          </span>
+                          <span className="ostats">
+                            지{st.int} 무{st.war} 매{st.cha}
+                          </span>
+                        </button>
+                        {open && isMyCity && !captive && (
+                          <div className="ocommands">
+                            {cmds.length === 0 && <div className="none">가능한 명령 없음</div>}
+                            {cmds.map((c, i) => (
+                              <button
+                                key={i}
+                                className="cmd"
+                                onClick={() => {
+                                  g.issue(c);
+                                  setExpandedOfficer(null);
+                                }}
+                              >
+                                {commandLabel(c, name, g.city)}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                  {isMyCity && (
+                    <div className="hint-inline">
+                      장수 1명당 그달 1회 행동. 「다음 달」로 넘기면 초기화됩니다.
+                    </div>
+                  )}
                 </div>
               )}
             </>

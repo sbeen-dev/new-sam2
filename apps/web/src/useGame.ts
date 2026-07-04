@@ -24,6 +24,8 @@ export interface GameApi {
   humanLordId: string | null;
   /** 직전 턴에 소유가 바뀐 도시(점령 연출용) */
   flashedCities: string[];
+  /** 이번 턴에 이미 행동한 장수 id (장수 1명=그달 1회) */
+  actedOfficers: string[];
   legalFor: (lordId: string) => Command[];
   /** 플레이어 명령 즉시 적용 */
   issue: (cmd: Command) => void;
@@ -48,6 +50,7 @@ export function useGame(scenarioId: string, humanLordId: string | null): GameApi
   const [events, setEvents] = useState<GameEvent[]>([]);
   const [winner, setWinner] = useState<string | null>(null);
   const [flashedCities, setFlashedCities] = useState<string[]>([]);
+  const [actedOfficers, setActedOfficers] = useState<string[]>([]);
   const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const flash = useCallback((ids: string[]) => {
@@ -63,6 +66,7 @@ export function useGame(scenarioId: string, humanLordId: string | null): GameApi
         if (r.events.length) setEvents((e) => [...r.events, ...e].slice(0, 200));
         return r.state;
       });
+      setActedOfficers((a) => (a.includes(cmd.actorOfficerId) ? a : [...a, cmd.actorOfficerId]));
     },
     [idx],
   );
@@ -80,6 +84,7 @@ export function useGame(scenarioId: string, humanLordId: string | null): GameApi
       flash(changed);
       return r.state;
     });
+    setActedOfficers([]); // 새 달 → 행동 초기화
   }, [idx, winner, flash]);
 
   const save = useCallback(() => {
@@ -95,6 +100,7 @@ export function useGame(scenarioId: string, humanLordId: string | null): GameApi
       setState(payload.state);
       setEvents(payload.events);
       setWinner(payload.winner);
+      setActedOfficers([]);
       flash([]);
       return true;
     } catch {
@@ -117,6 +123,7 @@ export function useGame(scenarioId: string, humanLordId: string | null): GameApi
     winner,
     humanLordId: activeHumanLordId,
     flashedCities,
+    actedOfficers,
     legalFor: (lordId) => listLegalCommands(state, idx, lordId),
     issue,
     nextMonth,
