@@ -1,0 +1,259 @@
+:root {
+  --bg: #16161c;
+  --panel: #1e1e26;
+  --panel2: #252530;
+  --line: #33333f;
+  --text: #e8e6df;
+  --muted: #9a988f;
+  --accent: #ffd54a;
+  font-family: 'Noto Sans KR', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ===== 시작 화면 ===== */
+.start {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px;
+  text-align: center;
+}
+.start h1 {
+  font-size: 2.6rem;
+  margin: 0 0 4px;
+  letter-spacing: 4px;
+}
+.subtitle {
+  color: var(--muted);
+  margin-bottom: 40px;
+}
+.lord-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+.lord-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 10px;
+  background: var(--panel);
+  color: var(--text);
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition:
+    transform 0.1s,
+    background 0.15s;
+}
+.lord-card:hover {
+  transform: translateY(-2px);
+  background: var(--panel2);
+}
+.observe {
+  margin-top: 18px;
+  padding: 12px 22px;
+  background: transparent;
+  color: var(--muted);
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.observe:hover {
+  color: var(--text);
+}
+.hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 28px;
+  line-height: 1.5;
+}
+.dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+/* ===== 게임 화면 ===== */
+.game {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  height: 100vh;
+}
+.map-pane {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: radial-gradient(circle at 50% 40%, #1c1c24, #121218);
+  min-width: 0;
+}
+.map {
+  width: 100%;
+  height: 100%;
+  max-height: 96vh;
+}
+.map .edge {
+  stroke: #3a3a46;
+  stroke-width: 1.4;
+}
+.map .node {
+  cursor: pointer;
+}
+.map .label {
+  fill: #d8d6cf;
+  font-size: 13px;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: #121218;
+  stroke-width: 3px;
+}
+
+.sidebar {
+  background: var(--panel);
+  border-left: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.hud {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.hud .date {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.hud .me {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 6px 0 10px;
+}
+.next {
+  width: 100%;
+  padding: 12px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  background: var(--accent);
+  color: #1a1a1a;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.next:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.victory {
+  padding: 14px;
+  background: #3a2f10;
+  color: var(--accent);
+  text-align: center;
+  font-weight: 700;
+}
+
+.panel {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.panel h3 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+}
+.owner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.stats {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.stats b {
+  color: var(--text);
+  float: right;
+}
+.commands {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+.cmd-title {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.cmd {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 9px 12px;
+  margin-bottom: 6px;
+  background: var(--panel2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  cursor: pointer;
+}
+.cmd:hover {
+  border-color: var(--accent);
+}
+
+.log {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px;
+}
+.log h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+.log ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.log .ev {
+  font-size: 0.85rem;
+  padding: 5px 8px;
+  border-left: 3px solid var(--line);
+  margin-bottom: 4px;
+  color: var(--text);
+  background: var(--panel2);
+  border-radius: 0 4px 4px 0;
+}
+.ev-conquer {
+  border-left-color: #d06a3b;
+}
+.ev-lordFall {
+  border-left-color: #b23b3b;
+  color: var(--accent);
+}
+.ev-repelled {
+  border-left-color: #5b8fa6;
+}
+.ev.muted {
+  color: var(--muted);
+  background: transparent;
+}

@@ -3,10 +3,17 @@
 KOEI 삼국지2(Romance of the Three Kingdoms II) 도스 게임을 웹 버전으로 리뉴얼하는 프로젝트.
 **각 CPU 군주를 Claude 기반 자율 에이전트**로 구동하는 AI 멀티에이전트 전략 시뮬레이션.
 
-## 현재 상태: Phase 0 — 기반 & 원작 분석 완료
+## 현재 상태: 브라우저에서 플레이 가능한 1차 버전
 
-게임을 만들기 전, 원작 시스템 분석 · 데이터/에셋 수집 계획 · 아키텍처 · 데이터 스키마를
-먼저 갖췄다. 상세 진행은 [`docs/roadmap.md`](./docs/roadmap.md).
+원작 분석 → 역사 기반 데이터 → 결정론 엔진 → 웹 UI까지 관통하는 수직 슬라이스가 동작한다.
+`pnpm dev`로 실행하면 시나리오1(189)을 군주 선택/관전으로 플레이할 수 있다(현재 CPU는
+규칙기반 AI, 이후 Claude 멀티에이전트로 교체). 상세 진행은 [`docs/roadmap.md`](./docs/roadmap.md).
+
+- ✅ 원작 시스템 분석·데이터 카탈로그·저작권 방침 (`docs/`)
+- ✅ 역사 기반 데이터: 41개 주·장수 55명·시나리오1 (`packages/engine/data`)
+- ✅ 결정론 게임 엔진 + 규칙기반 AI + 테스트 (`packages/engine`)
+- ✅ React+Vite 웹 UI: SVG 지도·명령·턴 진행 (`apps/web`)
+- ⬜ Claude 멀티에이전트(Phase 3), 데이터/명령 확장, 아트
 
 ## 문서 지도
 
