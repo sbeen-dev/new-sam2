@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Command, GameEvent } from '@sam2/shared';
 import { loadGameData } from '@sam2/engine/web';
 import { effWar, effInt, effCha } from '@sam2/engine';
@@ -7,6 +7,7 @@ import { MapView } from './MapView';
 import { Portrait, officerEpithet } from './Portrait';
 import { factionColor } from './faction';
 import { CUSTOM_LORD_ID, CUSTOM_STAT, CUSTOM_START_CITIES, type CustomLord } from './customGame';
+import { sfx, setSfxEnabled, startBgm, stopBgm } from './sound';
 
 type Data = ReturnType<typeof loadGameData>;
 
@@ -198,6 +199,15 @@ function GameScreen({
   const [expandedOfficer, setExpandedOfficer] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [battle, setBattle] = useState<GameEvent[] | null>(null);
+  const [sfxOn, setSfxOn] = useState(true);
+  const [bgmOn, setBgmOn] = useState(false);
+
+  useEffect(() => setSfxEnabled(sfxOn), [sfxOn]);
+  useEffect(() => () => stopBgm(), []); // 언마운트 시 BGM 정지
+  // 내 도시 함락 시 패배 효과음
+  useEffect(() => {
+    if (g.defenseAlert) sfx('defeat');
+  }, [g.defenseAlert]);
 
   // 군주 사망·승계 시 후계자를 따라간다(g.humanLordId).
   const me = g.humanLordId;
@@ -259,7 +269,14 @@ function GameScreen({
           ) : (
             <div className="me">관전 모드</div>
           )}
-          <button className="next" onClick={g.nextMonth} disabled={!!g.winner}>
+          <button
+            className="next"
+            onClick={() => {
+              sfx('click');
+              g.nextMonth();
+            }}
+            disabled={!!g.winner}
+          >
             다음 달 ▶
           </button>
           <div className="controls">
@@ -276,6 +293,23 @@ function GameScreen({
               불러오기
             </button>
             <button onClick={onExit}>새 게임</button>
+          </div>
+          <div className="controls">
+            <button onClick={() => setSfxOn((v) => !v)} title="효과음">
+              {sfxOn ? '🔊 효과음' : '🔇 효과음'}
+            </button>
+            <button
+              onClick={() => {
+                setBgmOn((v) => {
+                  if (v) stopBgm();
+                  else startBgm();
+                  return !v;
+                });
+              }}
+              title="배경음악"
+            >
+              {bgmOn ? '🎵 BGM' : '🎵 BGM 켜기'}
+            </button>
           </div>
         </header>
 
@@ -380,7 +414,14 @@ function GameScreen({
                                 onClick={() => {
                                   const evs = g.issue(c);
                                   setExpandedOfficer(null);
-                                  if (c.type === 'invade') setBattle(evs);
+                                  if (c.type === 'invade') {
+                                    setBattle(evs);
+                                    if (evs.some((e) => e.kind === 'item')) sfx('item');
+                                    else if (evs.some((e) => e.kind === 'conquer')) sfx('conquer');
+                                    else sfx('battle');
+                                  } else {
+                                    sfx('click');
+                                  }
                                 }}
                               >
                                 {commandLabel(c, name, g.city)}
