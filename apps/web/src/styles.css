@@ -129,9 +129,35 @@ body {
   height: 100%;
   max-height: 96vh;
 }
+.map .sea {
+  fill: #132430;
+}
+.map .land {
+  fill: #23281c;
+  stroke: #3b4a39;
+  stroke-width: 2;
+  stroke-opacity: 0.7;
+}
+.map .mtn {
+  fill: #3a3d2e;
+  stroke: #4b4e3c;
+  stroke-width: 1;
+}
+.map .river {
+  stroke-width: 5;
+  stroke-linecap: round;
+  opacity: 0.5;
+}
+.map .river.yellow {
+  stroke: #b0863a;
+}
+.map .river.yangtze {
+  stroke: #3f7391;
+}
 .map .edge {
-  stroke: #3a3a46;
+  stroke: #55635a;
   stroke-width: 1.4;
+  stroke-opacity: 0.7;
 }
 .map .node {
   cursor: pointer;
