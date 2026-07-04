@@ -2,6 +2,7 @@ import { useMemo, useState, useCallback, useRef } from 'react';
 import type { GameState, Command, GameEvent, Officer, City } from '@sam2/shared';
 import { loadGameData } from '@sam2/engine/web';
 import { indexData, loadScenario, runTurn, applyCommands, listLegalCommands } from '@sam2/engine';
+import { buildCustomData, type CustomLord } from './customGame';
 
 const SEED = 20260704;
 const SAVE_KEY = 'sam2-save-v1';
@@ -38,8 +39,16 @@ export interface GameApi {
   hasSave: boolean;
 }
 
-export function useGame(scenarioId: string, humanLordId: string | null): GameApi {
-  const data = useMemo(() => loadGameData(), []);
+export function useGame(
+  scenarioId: string,
+  humanLordId: string | null,
+  custom?: CustomLord,
+): GameApi {
+  // custom은 시작 시 1회 고정되므로 scenarioId 기준으로만 재계산한다.
+  const data = useMemo(
+    () => (custom ? buildCustomData(loadGameData(), scenarioId, custom) : loadGameData()),
+    [scenarioId, custom],
+  );
   const idx = useMemo(() => indexData(data), [data]);
 
   const [state, setState] = useState<GameState>(() => {

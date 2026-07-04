@@ -6,39 +6,37 @@ import { useGame } from './useGame';
 import { MapView } from './MapView';
 import { Portrait, officerEpithet } from './Portrait';
 import { factionColor } from './faction';
+import { CUSTOM_LORD_ID, CUSTOM_STAT, CUSTOM_START_CITIES, type CustomLord } from './customGame';
 
 type Data = ReturnType<typeof loadGameData>;
 
+interface Choice {
+  scenarioId: string;
+  lordId: string | null;
+  custom?: CustomLord;
+}
+
 export function App() {
   const data = useMemo(() => loadGameData(), []);
-  const [choice, setChoice] = useState<{ scenarioId: string; lordId: string | null } | null>(null);
+  const [choice, setChoice] = useState<Choice | null>(null);
 
   if (!choice) {
-    return (
-      <StartScreen
-        data={data}
-        onStart={(scenarioId, lordId) => setChoice({ scenarioId, lordId })}
-      />
-    );
+    return <StartScreen data={data} onStart={setChoice} />;
   }
   return (
     <GameScreen
       key={choice.scenarioId + choice.lordId}
       scenarioId={choice.scenarioId}
       humanLordId={choice.lordId}
+      custom={choice.custom}
       onExit={() => setChoice(null)}
     />
   );
 }
 
-function StartScreen({
-  data,
-  onStart,
-}: {
-  data: Data;
-  onStart: (scenarioId: string, lordId: string | null) => void;
-}) {
+function StartScreen({ data, onStart }: { data: Data; onStart: (c: Choice) => void }) {
   const [scenarioId, setScenarioId] = useState(data.scenarios[0]!.id);
+  const [customOpen, setCustomOpen] = useState(false);
   const scenario = data.scenarios.find((s) => s.id === scenarioId)!;
   const name = (id: string) => data.officers.find((o) => o.id === id)?.name ?? id;
 
@@ -52,32 +50,133 @@ function StartScreen({
           <button
             key={s.id}
             className={`tab ${s.id === scenarioId ? 'active' : ''}`}
-            onClick={() => setScenarioId(s.id)}
+            onClick={() => {
+              setScenarioId(s.id);
+              setCustomOpen(false);
+            }}
           >
             {s.year}년 · {s.title}
           </button>
         ))}
       </div>
 
-      <h2>군주를 선택하세요</h2>
-      <div className="lord-grid">
-        {scenario.playableLords.map((lid) => (
-          <button
-            key={lid}
-            className="lord-card"
-            style={{ borderColor: factionColor(lid) }}
-            onClick={() => onStart(scenarioId, lid)}
-          >
-            <span className="dot" style={{ background: factionColor(lid) }} />
-            {name(lid)}
-          </button>
-        ))}
+      {customOpen ? (
+        <CustomLordForm
+          data={data}
+          onCancel={() => setCustomOpen(false)}
+          onCreate={(custom) => onStart({ scenarioId, lordId: CUSTOM_LORD_ID, custom })}
+        />
+      ) : (
+        <>
+          <h2>군주를 선택하세요</h2>
+          <div className="lord-grid">
+            {scenario.playableLords.map((lid) => (
+              <button
+                key={lid}
+                className="lord-card"
+                style={{ borderColor: factionColor(lid) }}
+                onClick={() => onStart({ scenarioId, lordId: lid })}
+              >
+                <span className="dot" style={{ background: factionColor(lid) }} />
+                {name(lid)}
+              </button>
+            ))}
+          </div>
+          <div className="start-actions">
+            <button className="observe" onClick={() => setCustomOpen(true)}>
+              ＋ 신군주 만들기
+            </button>
+            <button className="observe" onClick={() => onStart({ scenarioId, lordId: null })}>
+              관전 모드 (모든 세력 AI)
+            </button>
+          </div>
+          <p className="hint">
+            선택한 군주는 직접 명령을 내리고, 나머지 CPU 군주는 규칙기반 AI가 자동으로 판단합니다.
+          </p>
+        </>
+      )}
+    </div>
+  );
+}
+
+function CustomLordForm({
+  data,
+  onCreate,
+  onCancel,
+}: {
+  data: Data;
+  onCreate: (c: CustomLord) => void;
+  onCancel: () => void;
+}) {
+  const [name, setName] = useState('');
+  const [int, setInt] = useState(70);
+  const [war, setWar] = useState(70);
+  const [cha, setCha] = useState(70);
+  const [cityId, setCityId] = useState(CUSTOM_START_CITIES[0]!);
+  const cityName = (id: string) => data.cities.find((c) => c.id === id)?.name ?? id;
+
+  const total = int + war + cha;
+  const over = total - CUSTOM_STAT.budget;
+  const valid = over <= 0;
+
+  const stat = (label: string, val: number, set: (n: number) => void) => (
+    <div className="stat-row">
+      <span className="stat-label">{label}</span>
+      <input
+        type="range"
+        min={CUSTOM_STAT.min}
+        max={CUSTOM_STAT.max}
+        value={val}
+        onChange={(e) => set(Number(e.target.value))}
+      />
+      <span className="stat-val">{val}</span>
+    </div>
+  );
+
+  return (
+    <div className="custom-form">
+      <h2>신군주 만들기</h2>
+      <label className="field">
+        <span>군주 이름</span>
+        <input
+          className="text-input"
+          value={name}
+          maxLength={8}
+          placeholder="예: 조자룡"
+          onChange={(e) => setName(e.target.value)}
+        />
+      </label>
+      {stat('지력', int, setInt)}
+      {stat('무력', war, setWar)}
+      {stat('매력', cha, setCha)}
+      <div className={`budget ${valid ? '' : 'over'}`}>
+        능력치 합계 {total} / {CUSTOM_STAT.budget}
+        {!valid && ` (${over} 초과)`}
       </div>
-      <button className="observe" onClick={() => onStart(scenarioId, null)}>
-        관전 모드 (모든 세력 AI)
-      </button>
+      <label className="field">
+        <span>시작 거점(중립)</span>
+        <select value={cityId} onChange={(e) => setCityId(e.target.value)} className="text-input">
+          {CUSTOM_START_CITIES.map((c) => (
+            <option key={c} value={c}>
+              {cityName(c)}
+            </option>
+          ))}
+        </select>
+      </label>
+      <div className="start-actions">
+        <button
+          className="lord-card"
+          disabled={!valid}
+          onClick={() => onCreate({ name: name.trim() || '신군주', int, war, cha, cityId })}
+        >
+          이 군주로 시작 ▶
+        </button>
+        <button className="observe" onClick={onCancel}>
+          취소
+        </button>
+      </div>
       <p className="hint">
-        선택한 군주는 직접 명령을 내리고, 나머지 CPU 군주는 규칙기반 AI가 자동으로 판단합니다.
+        선택한 중립 거점에서 소규모 세력으로 시작합니다. 등용·정복으로 세력을 키우세요.
       </p>
     </div>
   );
@@ -86,28 +185,32 @@ function StartScreen({
 function GameScreen({
   scenarioId,
   humanLordId,
+  custom,
   onExit,
 }: {
   scenarioId: string;
   humanLordId: string | null;
+  custom?: CustomLord;
   onExit: () => void;
 }) {
-  const g = useGame(scenarioId, humanLordId);
+  const g = useGame(scenarioId, humanLordId, custom);
   const [selected, setSelected] = useState<string | null>(null);
   const [expandedOfficer, setExpandedOfficer] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [battle, setBattle] = useState<GameEvent[] | null>(null);
 
+  // 군주 사망·승계 시 후계자를 따라간다(g.humanLordId).
+  const me = g.humanLordId;
   const sel = selected ? g.state.cities[selected] : null;
   const selCity = selected ? g.city(selected) : null;
   const name = (id: string) => g.officer(id)?.name ?? id;
   const acted = new Set(g.actedOfficers);
 
-  const myCities = Object.values(g.state.cities).filter((c) => c.lordId === humanLordId);
+  const myCities = Object.values(g.state.cities).filter((c) => c.lordId === me);
   const mySoldiers = myCities.reduce((n, c) => n + c.soldiers, 0);
   const myGold = myCities.reduce((n, c) => n + c.gold, 0);
 
-  const isMyCity = !!(selected && humanLordId && sel?.lordId === humanLordId);
+  const isMyCity = !!(selected && me && sel?.lordId === me);
   // 선택 도시에 주재하는 내 장수(+포로) 및 도시 명령
   const officersHere = selected
     ? Object.values(g.state.officers).filter(
@@ -117,9 +220,7 @@ function GameScreen({
           (o.status === 'officer' || o.status === 'lord' || o.status === 'captive'),
       )
     : [];
-  const cityCmds: Command[] = isMyCity
-    ? g.legalFor(humanLordId!).filter((c) => c.cityId === selected)
-    : [];
+  const cityCmds: Command[] = isMyCity ? g.legalFor(me!).filter((c) => c.cityId === selected) : [];
   const cmdsForOfficer = (oid: string) =>
     dedupeCommands(cityCmds.filter((c) => c.actorOfficerId === oid));
   const effStat = (oid: string) => {
@@ -139,7 +240,7 @@ function GameScreen({
           state={g.state}
           selectedCityId={selected}
           onSelect={setSelected}
-          humanLordId={humanLordId}
+          humanLordId={me}
           flashedCities={g.flashedCities}
         />
       </div>
@@ -149,10 +250,10 @@ function GameScreen({
           <div className="date">
             {g.state.year}년 {g.state.month}월
           </div>
-          {humanLordId ? (
+          {me ? (
             <div className="me">
-              <span className="dot" style={{ background: factionColor(humanLordId) }} />
-              {name(humanLordId)} · 도시 {myCities.length} · 병 {mySoldiers.toLocaleString()} · 금{' '}
+              <span className="dot" style={{ background: factionColor(me) }} />
+              {name(me)} · 도시 {myCities.length} · 병 {mySoldiers.toLocaleString()} · 금{' '}
               {myGold.toLocaleString()}
             </div>
           ) : (

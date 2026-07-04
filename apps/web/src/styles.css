@@ -85,8 +85,14 @@ body {
   transform: translateY(-2px);
   background: var(--panel2);
 }
-.observe {
+.start-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
   margin-top: 18px;
+}
+.observe {
   padding: 12px 22px;
   background: transparent;
   color: var(--muted);
@@ -96,6 +102,72 @@ body {
 }
 .observe:hover {
   color: var(--text);
+}
+
+/* 신군주 폼 */
+.custom-form {
+  max-width: 440px;
+  margin: 20px auto 0;
+  text-align: left;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 24px;
+}
+.custom-form h2 {
+  text-align: center;
+  margin-top: 0;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 14px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.text-input {
+  padding: 9px 12px;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 1rem;
+}
+.stat-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.stat-label {
+  width: 40px;
+  color: var(--muted);
+}
+.stat-row input[type='range'] {
+  flex: 1;
+  accent-color: var(--accent);
+}
+.stat-val {
+  width: 30px;
+  text-align: right;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.budget {
+  text-align: center;
+  padding: 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 14px;
+}
+.budget.over {
+  color: #e08a8a;
+  font-weight: 700;
+}
+.custom-form .lord-card:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 .hint {
   color: var(--muted);
