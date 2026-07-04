@@ -74,9 +74,10 @@ function adjacentEnemy(state: GameState, idx: DataIndex, cityId: string, lordId:
   return adj.some((a) => state.cities[a]!.lordId !== lordId);
 }
 
-// AI는 수비 홈 이점을 감안해 확실한 우세(수비의 약 1.7배 + 여유 병력)일 때만 침공.
-const INVADE_FORCE_RATIO = 1.7;
-const INVADE_MIN_MARGIN = 3000;
+// AI는 수비 홈 이점을 감안해 우세(수비의 약 1.45배 + 여유 병력)일 때 침공.
+// 너무 크면 교착(미통일), 너무 작으면 국경 반복 점령 → 중간값.
+const INVADE_FORCE_RATIO = 1.45;
+const INVADE_MIN_MARGIN = 1800;
 
 /** 방어 병력 대비 확실히 우세한 인접 도시만 노린다(무모한 침공·국경 반복 점령 방지). */
 function pickBestInvade(state: GameState, options: Command[]): Command | null {
