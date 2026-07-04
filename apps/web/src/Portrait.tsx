@@ -2,12 +2,12 @@ import type { Officer, OfficerStatus } from '@sam2/shared';
 import { factionColor } from './faction';
 
 /**
- * 절차적 초상(무초상 렌더 강화판). 원작 KOEI 초상화를 쓰지 않고, 장수의
- * 정적 속성(이름·능력치·연령·역할·진영)에서 결정론적으로 얼굴을 생성한다.
- * 같은 장수 → 항상 같은 그림(재현성). 후속에 실제 아트로 교체 가능.
+ * 절차적 초상(일러스트 고도화판). 원작 KOEI 초상화를 쓰지 않고, 장수의 정적 속성
+ * (이름·능력치·연령·역할·진영)에서 결정론적으로 삽화풍 얼굴을 합성한다.
+ * 음영 그라데이션·이목구비·머리모양·관모/투구·한푸 옷깃을 갖춘다.
+ * 같은 장수 → 항상 같은 그림(재현성). 외부 아트/네트워크 없음.
  */
 
-/** 문자열 → 안정적 해시(결정론) */
 function hash(s: string): number {
   let h = 2166136261;
   for (let i = 0; i < s.length; i++) {
@@ -17,8 +17,14 @@ function hash(s: string): number {
   return h >>> 0;
 }
 
-const SKIN = ['#e6b98f', '#d9a878', '#c9976a', '#e8c39e', '#d0a074'];
-const CLOTH = ['#2c3a4a', '#3a2c2c', '#2c3a2c', '#3a3320', '#33263a'];
+// 피부 톤(밝은면/어두운면 쌍)
+const SKIN = [
+  ['#f0c6a0', '#c99873'],
+  ['#e8b98f', '#bf8a63'],
+  ['#dcab7e', '#b07d56'],
+  ['#f2cfab', '#cf9f78'],
+];
+const CLOTH = ['#33465a', '#42302f', '#31452f', '#453a24', '#3a2b45', '#2f3f45'];
 
 export function Portrait({
   officer,
@@ -35,13 +41,13 @@ export function Portrait({
 }) {
   const h = hash(officer.id);
   const faction = factionColor(lordId);
-  const skin = SKIN[h % SKIN.length]!;
+  const [skinLight, skinDark] = SKIN[h % SKIN.length]!;
   const cloth = CLOTH[(h >> 3) % CLOTH.length]!;
   const senior = age >= 55;
   const young = age > 0 && age < 24;
-  const hairColor = senior ? '#c9c6bf' : (h >> 5) % 3 === 0 ? '#3a3330' : '#22201e';
+  const hairDark = senior ? '#b9b6ae' : '#211f1d';
+  const hairLight = senior ? '#d7d4cc' : (h >> 5) % 3 === 0 ? '#4a4038' : '#332e29';
 
-  // 역할별 관모: 군주=관, 무장(무력↑)=투구, 문관(지력↑)=문사건, 그 외 두건
   const headgear: 'crown' | 'helmet' | 'scholar' | 'cloth' =
     status === 'lord'
       ? 'crown'
@@ -51,91 +57,183 @@ export function Portrait({
           ? 'scholar'
           : 'cloth';
 
-  // 눈썹 각도(무력 높을수록 사나운 인상)
-  const brow = Math.min(6, Math.round(officer.war / 18));
-  const beard = young ? 0 : senior ? 12 : 7 + ((h >> 7) % 5);
+  const fierce = officer.war >= 82; // 사나운 인상
+  const beard: 'none' | 'goatee' | 'full' | 'long' = young
+    ? 'none'
+    : senior
+      ? 'long'
+      : (h >> 7) % 2 === 0
+        ? 'full'
+        : 'goatee';
 
-  const id = `pg-${officer.id}`;
+  const uid = `p-${officer.id}`;
   return (
     <svg width={size} height={size} viewBox="0 0 100 100" className="portrait" aria-hidden>
       <defs>
-        <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor={faction} stopOpacity="0.55" />
-          <stop offset="1" stopColor="#14141a" stopOpacity="0.95" />
+        <linearGradient id={`${uid}-bg`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={faction} stopOpacity="0.7" />
+          <stop offset="0.6" stopColor={faction} stopOpacity="0.25" />
+          <stop offset="1" stopColor="#12121a" stopOpacity="0.95" />
         </linearGradient>
-        <clipPath id={`${id}-c`}>
+        <radialGradient id={`${uid}-vig`} cx="0.5" cy="0.42" r="0.7">
+          <stop offset="0.55" stopColor="#000" stopOpacity="0" />
+          <stop offset="1" stopColor="#000" stopOpacity="0.45" />
+        </radialGradient>
+        <linearGradient id={`${uid}-skin`} x1="0.25" y1="0.15" x2="0.8" y2="0.95">
+          <stop offset="0" stopColor={skinLight} />
+          <stop offset="1" stopColor={skinDark} />
+        </linearGradient>
+        <linearGradient id={`${uid}-hair`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={hairLight} />
+          <stop offset="1" stopColor={hairDark} />
+        </linearGradient>
+        <clipPath id={`${uid}-c`}>
           <rect x="0" y="0" width="100" height="100" rx="14" />
         </clipPath>
       </defs>
-      <g clipPath={`url(#${id}-c)`}>
-        <rect x="0" y="0" width="100" height="100" fill={`url(#${id})`} />
-        {/* 어깨/의복 */}
-        <path d="M14 100 Q20 70 50 68 Q80 70 86 100 Z" fill={cloth} />
-        <path d="M42 72 L58 72 L54 84 L46 84 Z" fill={skin} opacity="0.9" />
-        {/* 머리 뒤 머리카락 */}
-        <ellipse cx="50" cy="44" rx="24" ry="26" fill={hairColor} />
+
+      <g clipPath={`url(#${uid}-c)`}>
+        <rect x="0" y="0" width="100" height="100" fill={`url(#${uid}-bg)`} />
+
+        {/* 어깨/포(袍) */}
+        <path d="M8 100 Q14 72 34 66 L66 66 Q86 72 92 100 Z" fill={cloth} />
+        <path d="M8 100 Q14 72 34 66 L40 70 Q22 78 16 100 Z" fill="#000" opacity="0.18" />
+        {/* 한푸 교차 옷깃 */}
+        <path d="M50 70 L34 100 L44 100 L52 78 Z" fill={faction} opacity="0.85" />
+        <path d="M50 70 L66 100 L56 100 L48 78 Z" fill={faction} opacity="0.6" />
+        {/* 목 */}
+        <path d="M43 60 L57 60 L56 74 Q50 78 44 74 Z" fill={skinDark} />
+
+        {/* 머리(뒤) */}
+        <path
+          d="M28 40 Q26 18 50 15 Q74 18 72 40 L72 52 Q72 30 50 28 Q28 30 28 52 Z"
+          fill={`url(#${uid}-hair)`}
+        />
+
         {/* 얼굴 */}
-        <ellipse cx="50" cy="46" rx="19" ry="22" fill={skin} />
-        {/* 수염 */}
-        {beard > 0 && (
-          <path
-            d={`M33 52 Q50 ${60 + beard} 67 52 Q60 ${66 + beard} 50 ${68 + beard} Q40 ${66 + beard} 33 52 Z`}
-            fill={hairColor}
-          />
+        <path
+          d="M32 40 Q32 24 50 22 Q68 24 68 40 Q68 58 58 66 Q50 70 42 66 Q32 58 32 40 Z"
+          fill={`url(#${uid}-skin)`}
+        />
+        {/* 귀 */}
+        <ellipse cx="31.5" cy="45" rx="3.5" ry="5" fill={`url(#${uid}-skin)`} />
+        <ellipse cx="68.5" cy="45" rx="3.5" ry="5" fill={`url(#${uid}-skin)`} />
+        {/* 볼 음영 */}
+        <ellipse cx="40" cy="52" rx="5" ry="7" fill={skinDark} opacity="0.25" />
+        <ellipse cx="60" cy="52" rx="5" ry="7" fill={skinDark} opacity="0.25" />
+
+        {/* 앞머리 */}
+        <path d="M32 40 Q34 26 50 24 Q66 26 68 40 Q60 32 50 32 Q40 32 32 40 Z" fill={hairDark} />
+        {/* 상투(topknot) */}
+        {headgear !== 'helmet' && (
+          <>
+            <ellipse cx="50" cy="19" rx="5.5" ry="6" fill={`url(#${uid}-hair)`} />
+            <rect x="45" y="20" width="10" height="3" rx="1.5" fill="#2a2a2a" />
+          </>
         )}
-        {/* 눈 */}
-        <circle cx="42" cy="46" r="2.1" fill="#1a1a1a" />
-        <circle cx="58" cy="46" r="2.1" fill="#1a1a1a" />
+
         {/* 눈썹 */}
         <path
-          d={`M37 ${40} l9 ${-brow * 0.4 + 1}`}
-          stroke="#1a1a1a"
-          strokeWidth="1.8"
+          d={`M38 41 Q43 ${fierce ? 38 : 39.5} 47 40`}
+          stroke="#1c1712"
+          strokeWidth="2"
+          fill="none"
           strokeLinecap="round"
         />
         <path
-          d={`M63 ${40} l-9 ${-brow * 0.4 + 1}`}
-          stroke="#1a1a1a"
-          strokeWidth="1.8"
+          d={`M62 41 Q57 ${fierce ? 38 : 39.5} 53 40`}
+          stroke="#1c1712"
+          strokeWidth="2"
+          fill="none"
+          strokeLinecap="round"
+        />
+        {/* 눈 */}
+        <path d="M39 45 Q43 43 47 45 Q43 47.5 39 45 Z" fill="#fff" opacity="0.9" />
+        <path d="M53 45 Q57 43 61 45 Q57 47.5 53 45 Z" fill="#fff" opacity="0.9" />
+        <circle cx="43" cy="45.2" r="1.7" fill="#20140c" />
+        <circle cx="57" cy="45.2" r="1.7" fill="#20140c" />
+        {/* 코 */}
+        <path
+          d="M50 46 L48 54 Q50 56 52 54"
+          stroke={skinDark}
+          strokeWidth="1.3"
+          fill="none"
           strokeLinecap="round"
         />
         {/* 입 */}
         <path
-          d="M45 56 Q50 58 55 56"
-          stroke="#7a4a3a"
-          strokeWidth="1.4"
+          d={`M45 59 Q50 ${fierce ? 60 : 61.5} 55 59`}
+          stroke="#8a4436"
+          strokeWidth="1.6"
           fill="none"
           strokeLinecap="round"
         />
+
+        {/* 수염 */}
+        {beard === 'goatee' && (
+          <path d="M46 60 Q50 68 54 60 Q52 66 50 68 Q48 66 46 60 Z" fill={hairDark} />
+        )}
+        {beard === 'full' && (
+          <path
+            d="M38 56 Q40 70 50 72 Q60 70 62 56 Q58 64 50 65 Q42 64 38 56 Z"
+            fill={`url(#${uid}-hair)`}
+          />
+        )}
+        {beard === 'long' && (
+          <path
+            d="M37 55 Q38 78 50 86 Q62 78 63 55 Q58 66 50 67 Q42 66 37 55 Z"
+            fill={`url(#${uid}-hair)`}
+          />
+        )}
+        {/* 콧수염(성인) */}
+        {beard !== 'none' && (
+          <path
+            d="M44 57 Q50 60 56 57"
+            stroke={hairDark}
+            strokeWidth="2.4"
+            fill="none"
+            strokeLinecap="round"
+          />
+        )}
+
         {/* 관모 */}
         {headgear === 'crown' && (
           <g>
-            <rect x="30" y="20" width="40" height="9" rx="2" fill="#c9a24a" />
-            <rect x="44" y="12" width="12" height="10" fill="#c9a24a" />
-            <circle cx="50" cy="12" r="3" fill="#e7d27a" />
+            <path d="M32 30 Q50 14 68 30 L68 24 Q50 10 32 24 Z" fill="#c8a24a" />
+            <rect x="44" y="8" width="12" height="12" rx="1.5" fill="#c8a24a" />
+            <circle cx="50" cy="10" r="3.2" fill="#f0dd8a" />
+            <rect x="30" y="29" width="40" height="4" rx="2" fill="#a98426" />
           </g>
         )}
         {headgear === 'helmet' && (
           <g>
-            <path d="M28 34 Q50 8 72 34 Q60 26 50 26 Q40 26 28 34 Z" fill="#8a8f96" />
-            <rect x="47" y="8" width="6" height="14" fill="#b23b3b" />
-            <path d="M28 34 Q50 24 72 34 L72 30 Q50 20 28 30 Z" fill="#6f747b" />
+            <path d="M28 36 Q50 6 72 36 Q62 26 50 25 Q38 26 28 36 Z" fill="#8b9099" />
+            <path d="M28 36 Q50 22 72 36 L72 31 Q50 18 28 31 Z" fill="#6d727b" />
+            <rect x="47" y="4" width="6" height="18" rx="2" fill="#b23b3b" />
+            <path d="M30 34 L28 48 L33 46 L34 35 Z" fill="#6d727b" />
+            <path d="M70 34 L72 48 L67 46 L66 35 Z" fill="#6d727b" />
           </g>
         )}
         {headgear === 'scholar' && (
-          <path d="M30 30 Q50 16 70 30 L70 34 Q50 26 30 34 Z" fill="#2a2a33" />
+          <g>
+            <path d="M30 32 Q50 18 70 32 L70 27 Q50 20 30 27 Z" fill="#242430" />
+            <rect x="46" y="18" width="8" height="9" rx="2" fill="#242430" />
+          </g>
         )}
-        {headgear === 'cloth' && <path d="M30 32 Q50 18 70 32 Q50 26 30 32 Z" fill={cloth} />}
+        {headgear === 'cloth' && <path d="M30 33 Q50 20 70 33 Q50 27 30 33 Z" fill={cloth} />}
+
+        {/* 비네트 */}
+        <rect x="0" y="0" width="100" height="100" fill={`url(#${uid}-vig)`} />
       </g>
       <rect
-        x="1"
-        y="1"
-        width="98"
-        height="98"
-        rx="14"
+        x="1.5"
+        y="1.5"
+        width="97"
+        height="97"
+        rx="13"
         fill="none"
         stroke={faction}
-        strokeWidth="3"
+        strokeWidth="2.5"
       />
     </svg>
   );
